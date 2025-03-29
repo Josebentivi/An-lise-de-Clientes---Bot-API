@@ -70,7 +70,7 @@ if True:
 
         # Exibição dos dados carregados
         st.subheader("Visualização dos Dados")
-        st.dataframe(df.tail(20))
+        st.dataframe(df)
 
         # 1. Frequência e Volume de Ações
         st.subheader("Contagem de Ações")
