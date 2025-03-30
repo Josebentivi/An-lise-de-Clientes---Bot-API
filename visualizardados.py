@@ -6,16 +6,17 @@ import warnings
 import requests
 import matplotlib.pyplot as plt
 
+# Suppress Streamlit's ScriptRunContext warning
+warnings.filterwarnings("ignore", message="missing ScriptRunContext")
+
+# Configuração inicial da página
+st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wide")
 
 chave_secreta = st.text_input("Senha de acesso", type="password")
 if not chave_secreta:
     st.info("Por favor, adicione a sua senha de acesso.", icon="🗝️")
 else:
-    # Suppress Streamlit's ScriptRunContext warning
-    warnings.filterwarnings("ignore", message="missing ScriptRunContext")
-
-    # Configuração inicial da página
-    st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wide")
+    
     st.title("Dashboard de Visualização do comportamento de clientes - JurisAI")
 
     # Autenticação: Solicita a chave secreta
