@@ -18,7 +18,8 @@ st.sidebar.header("Autenticação")
 chave_secreta = st.sidebar.text_input("Insira sua chave", type="password")
 
 url = "http://52.2.202.37/streamlit/"
-data = {"cliente": chave_secreta}
+data = {"cliente": chave_secreta,
+        "produto": "jurisai"}
 response = requests.post(url, json=data, timeout=5*60)
 if response.status_code == 200:  
     saida = response.json()["saida"]
