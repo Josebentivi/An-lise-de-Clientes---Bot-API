@@ -136,7 +136,7 @@ if True:
             if len(df_usuario) >= 2:
                 df_usuario = df_usuario.sort_values("Data")
                 df_usuario['Tempo_entre'] = df_usuario['Data'].diff().dt.total_seconds()
-                st.dataframe(df_usuario[['Data', 'Acao', 'Tempo_entre']].head(10))
+                st.dataframe(df_usuario[['Data', 'Acao', 'Tempo_entre']])
                 st.write("Tempo médio entre ações (segundos): ", df_usuario['Tempo_entre'].mean())
             else:
                 st.info("O usuário possui poucas ações para análise.")
