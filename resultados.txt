@@ -1,0 +1,24 @@
+3|Carlos Souza|carlos.novo@mail.com|2025-03-31 00:13:53
+5|Eduarda Lima|eduarda.lima@mail.com|2025-03-31 00:13:53
+7|Gabriela Alves|gabriela.alterada@mail.com|2025-03-31 00:13:53
+10|Joana Dias|joana.dias@mail.com|2025-03-31 00:13:53
+14|Nina Barros|nina.atual@mail.com|2025-03-31 00:13:53
+17|Quentin Souza|quentin.novo@mail.com|2025-03-31 00:13:53
+21|Ulisses Nunes|ulisses.nunes@mail.com|2025-03-31 00:13:53
+22|Vicente Ramos|vicente.ramos@mail.com|2025-03-31 00:13:53
+23|Wagner Lopes|wagner.lopes@mail.com|2025-03-31 00:13:53
+24|Xavier Silva|xavier.silva@mail.com|2025-03-31 00:13:53
+3|Carlos Souza|carlos.novo@mail.com
+5|Eduarda Lima|eduarda.lima@mail.com
+7|Gabriela Alves|gabriela.alterada@mail.com
+10|Joana Dias|joana.dias@mail.com
+14|Nina Barros|nina.atual@mail.com
+17|Quentin Souza|quentin.novo@mail.com
+21|Ulisses Nunes|ulisses.nunes@mail.com
+22|Vicente Ramos|vicente.ramos@mail.com
+23|Wagner Lopes|wagner.lopes@mail.com
+24|Xavier Silva|xavier.silva@mail.com
+1|3|Carlos Souza|carlos.souza@mail.com|Carlos Souza|carlos.novo@mail.com|2025-03-31 00:13:53
+2|7|Gabriela Alves|gabriela.alves@mail.com|Gabriela Alves|gabriela.alterada@mail.com|2025-03-31 00:13:53
+3|14|Nina Barros|nina.barros@mail.com|Nina Barros|nina.atual@mail.com|2025-03-31 00:13:53
+4|17|Quentin Souza|quentin.souza@mail.com|Quentin Souza|quentin.novo@mail.com|2025-03-31 00:13:53
