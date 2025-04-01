@@ -92,9 +92,9 @@ else:
 
     st.subheader("3. Análise de Retenção de Usuários")
     # Calcula a diferença entre o primeiro e o último acesso para cada usuário
-    df_reten = df.groupby("Usuario").agg(primeiro_acesso=("Data", "min"),
-                                          ultimo_acesso=("Data", "max")).reset_index()
-    df_reten["dif_dias"] = (df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]).dt.days
+    
+    df_reten = df.groupby("Usuario").agg(primeiro_acesso=("Data", "min"), ultimo_acesso=("Data", "max")).reset_index()
+    df_reten["dif_dias"] = ((df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]) / pd.Timedelta(days=1)).astype(int)
     thresholds = [30, 60, 90]
     for t in thresholds:
         taxa = (df_reten["dif_dias"] >= t).mean() * 100
