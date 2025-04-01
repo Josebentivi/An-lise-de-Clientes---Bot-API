@@ -232,8 +232,8 @@ else:
             fig3, ax3 = plt.subplots(figsize=(10, 6))
             sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
             ax3.set_title("Distribuição do Número de Ações por Usuário")
-            ax1.set_xlabel("Interações")
-            ax1.set_ylabel("Usuários")
+            ax3.set_xlabel("Interações")
+            ax3.set_ylabel("Usuários")
             st.pyplot(fig3)
 
             # 5. Heatmap: Atividade por Hora e Dia da Semana
