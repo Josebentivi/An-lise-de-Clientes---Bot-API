@@ -6,8 +6,8 @@ import warnings
 import requests
 import matplotlib.pyplot as plt
 #estilos = [ 'dark_background', 'fast', 'fivethirtyeight','Solarize_Light2', '_classic_test_patch', '_mpl-gallery', '_mpl-gallery-nogrid', 'bmh', 'classic', 'ggplot', 'grayscale', 'seaborn-v0_8', 'seaborn-v0_8-bright', 'seaborn-v0_8-colorblind', 'seaborn-v0_8-dark', 'seaborn-v0_8-dark-palette', 'seaborn-v0_8-darkgrid', 'seaborn-v0_8-deep', 'seaborn-v0_8-muted', 'seaborn-v0_8-notebook', 'seaborn-v0_8-paper', 'seaborn-v0_8-pastel', 'seaborn-v0_8-poster', 'seaborn-v0_8-talk', 'seaborn-v0_8-ticks', 'seaborn-v0_8-white', 'seaborn-v0_8-whitegrid', 'tableau-colorblind10']
-plt.style.use('seaborn-v0_8-pastel')
-
+plt.style.use("seaborn-v0_8-pastel")
+            
 
 # Suppress Streamlit's ScriptRunContext warning
 warnings.filterwarnings("ignore", message="missing ScriptRunContext")
@@ -89,6 +89,14 @@ else:
             ax1.set_title("Frequência de Ações")
             st.pyplot(fig1)
             plt.close(fig1)  # Fecha a figura para liberar memória
+                
+            plt.style.use('dark_background')
+            st.text(f"Estilo utilizado: {'dark_background'}")
+            fig1, ax1 = plt.subplots(figsize=(10, 6))
+            sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
+            ax1.set_title("Frequência de Ações")
+            st.pyplot(fig1)
+            plt.close(fig1)  # Fecha a figura para liberar memória
 
             # 2. Evolução Temporal das Ações (Diária)
             st.subheader("Evolução Temporal das Ações")
@@ -117,7 +125,6 @@ else:
             usuarios_atividade = df['Usuario'].value_counts().reset_index()
             usuarios_atividade.columns = ['Usuario', 'Acoes']
             st.dataframe(usuarios_atividade.head(10))
-            
             fig3, ax3 = plt.subplots(figsize=(10, 6))
             sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
             ax3.set_title("Distribuição do Número de Ações por Usuário")
@@ -125,9 +132,9 @@ else:
 
             # 5. Heatmap: Atividade por Hora e Dia da Semana
             st.subheader("Heatmap de Atividade (Hora vs Dia da Semana)")
-            pivot_table = df.pivot_table(index='Dia', columns='Hora', values='Acao', aggfunc='count').fillna(0)
+            pivot_table = df.pivot_table(index='Dia_da_Semana', columns='Hora', values='Acao', aggfunc='count').fillna(0)
             # Reordenar dias da semana
-            ordem_dias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+            ordem_dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             pivot_table = pivot_table.reindex(ordem_dias)
             fig4, ax4 = plt.subplots(figsize=(12, 6))
             sns.heatmap(pivot_table, cmap="YlGnBu", ax=ax4)
