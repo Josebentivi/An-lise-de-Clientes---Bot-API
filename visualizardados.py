@@ -60,7 +60,7 @@ else:
     fig1, ax1 = plt.subplots()
     ax1.plot(crescimento["AnoMes"], crescimento["Novos Usuários"], marker="o")
     ax1.set_xlabel("Ano/Mês")
-    ax1.set_ylabel("Novos Usuários")
+    ax1.set_ylabel("Número de Usuários")
     ax1.set_title("Crescimento de Usuários ao longo do tempo")
     plt.xticks(rotation=45)
     st.pyplot(fig1)
@@ -177,6 +177,8 @@ else:
             fig1, ax1 = plt.subplots(figsize=(10, 6))
             sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
             ax1.set_title("Frequência de Ações")
+            ax1.set_xlabel("Interações")
+            ax1.set_ylabel("Tipo de Ação")
             st.pyplot(fig1)
             plt.close(fig1)  # Fecha a figura para liberar memória
 
