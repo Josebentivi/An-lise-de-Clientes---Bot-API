@@ -49,7 +49,7 @@ else:
     #df = pd.read_csv(uploaded_file)
     df["Data"] = pd.to_datetime(df["Data"], format="%Y/%m/%d %H:%M:%S")
     st.header("Visualização dos Dados")
-    st.write(df.head())
+    st.write(df)
 
     st.subheader("1. Análise de Crescimento de Usuários")
     # Considera o primeiro registro de cada usuário
