@@ -182,7 +182,7 @@ else:
             st.pyplot(fig1)
             plt.close(fig1)  # Fecha a figura para liberar memória
 
-            # 1. Frequência e Volume de Ações do Usuário
+            # 1.5. Frequência e Volume de Ações do Usuário
             st.subheader("Contagem de Ações")
             contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
             contagem_acoes.columns = ['Acao', 'Contagem']
@@ -197,6 +197,8 @@ else:
             fig1, ax1 = plt.subplots(figsize=(10, 6))
             sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
             ax1.set_title("Frequência de Ações")
+            ax1.set_xlabel("Interações")
+            ax1.set_ylabel("Tipo de Ação")
             st.pyplot(fig1)
             plt.close(fig1)  # Fecha a figura para liberar memória
 
@@ -230,6 +232,8 @@ else:
             fig3, ax3 = plt.subplots(figsize=(10, 6))
             sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
             ax3.set_title("Distribuição do Número de Ações por Usuário")
+            ax1.set_xlabel("Interações")
+            ax1.set_ylabel("Usuários")
             st.pyplot(fig3)
 
             # 5. Heatmap: Atividade por Hora e Dia da Semana
@@ -238,9 +242,12 @@ else:
             # Reordenar dias da semana
             ordem_dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             pivot_table = pivot_table.reindex(ordem_dias)
+            pivot_table.columns = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
             fig4, ax4 = plt.subplots(figsize=(12, 6))
             sns.heatmap(pivot_table, cmap="YlGnBu", ax=ax4)
             ax4.set_title("Número de Ações por Hora e Dia da Semana")
+            ax4.set_xlabel("Interações")
+            ax4.set_ylabel("Dia da Semana")
             st.pyplot(fig4)
             
             # 6. Análise de Tempo entre Ações (para usuários individuais)
