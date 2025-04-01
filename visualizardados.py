@@ -44,7 +44,7 @@ else:
     #df = pd.read_csv(uploaded_file)
     df = pd.DataFrame(saida,columns=["Usuario","Data","Fonte","Obs","Créditos Função 1","Créditos Função 2"])
     df = df[["Usuario","Data","Créditos Função 1","Créditos Função 2"]]
-    df = df[~df["Data"].astype(str).str.contains("2025-04")]
+    #df = df[~df["Data"].astype(str).str.contains("2025-04")]
     
     st.title("Análise de Log de Registro dos Clientes")
     #df = pd.read_csv(uploaded_file)
@@ -172,6 +172,21 @@ else:
             contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
             contagem_acoes.columns = ['Acao', 'Contagem']
             st.dataframe(contagem_acoes)
+
+            # Gráfico de barras para a frequência das ações do Servidor
+            fig1, ax1 = plt.subplots(figsize=(10, 6))
+            sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
+            ax1.set_title("Frequência de Ações")
+            st.pyplot(fig1)
+            plt.close(fig1)  # Fecha a figura para liberar memória
+
+            # 1. Frequência e Volume de Ações do Usuário
+            st.subheader("Contagem de Ações")
+            contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
+            contagem_acoes.columns = ['Acao', 'Contagem']
+            st.dataframe(contagem_acoes)
+            contagem_acoes = contagem_acoes[['Consulra PDF chat utilizado', 'Consulta Vade utilizada', 'Consulta Servidor utilizada', 'Consulta Doutrina utilizada', 'Consulta JurisBrasil utilizada', 'Consulta Leis utilizada', 'Criar documentação utilizada', 'Audio utilizado',  'Voz utilizada', 'Imagem carregada',  'PDF enviada',  'PDF enviado', 'Papo utilizado', 'Consulta removida', 'Consulta adicionada',  'Bateria removida', 'Bateria adicionada', 'Documentação utilizada',  'Vade utilizado', 'CGU utilizada',  'Doutrina utilizada', 'Leis utilizada',  'Consulta PDF utilizada', 'Bibliografia utilizada']]
+            
 
             # Gráfico de barras para a frequência das ações
             fig1, ax1 = plt.subplots(figsize=(10, 6))
