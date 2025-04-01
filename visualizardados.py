@@ -89,6 +89,8 @@ else:
                 sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
                 ax1.set_title("Frequência de Ações")
                 st.pyplot(fig1)
+                sleep(1)  # Pausa de 1 segundo entre os estilos
+                plt.close(fig1)  # Fecha a figura para liberar memória
 
             # 2. Evolução Temporal das Ações (Diária)
             st.subheader("Evolução Temporal das Ações")
