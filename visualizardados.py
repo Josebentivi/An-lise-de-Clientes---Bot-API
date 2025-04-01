@@ -64,44 +64,45 @@ else:
     plt.xticks(rotation=45)
     st.pyplot(fig1)
 
-    st.subheader("2. Análise de Disponibilidade de Créditos")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("Créditos Função 1")
-        fig2, ax2 = plt.subplots()
-        ax2.hist(df["Créditos Função 1"], bins=20, color="skyblue", edgecolor="black")
-        ax2.set_xlabel("Créditos")
-        ax2.set_ylabel("Frequência")
-        ax2.set_title("Distribuição dos Créditos Função 1")
-        st.pyplot(fig2)
-        media1 = df["Créditos Função 1"].mean()
-        mediana1 = df["Créditos Função 1"].median()
-        st.write(f"Média: {media1:.2f}, Mediana: {mediana1}")
+    #st.subheader("2. Análise de Disponibilidade de Créditos")
+    #col1, col2 = st.columns(2)
+    #with col1:
+    #    st.write("Créditos Função 1")
+    #    fig2, ax2 = plt.subplots()
+    #    ax2.hist(df["Créditos Função 1"], bins=20, color="skyblue", edgecolor="black")
+    #    ax2.set_xlabel("Créditos")
+    #    ax2.set_ylabel("Frequência")
+    #    ax2.set_title("Distribuição dos Créditos Função 1")
+    #    st.pyplot(fig2)
+    #    media1 = df["Créditos Função 1"].mean()
+    #    mediana1 = df["Créditos Função 1"].median()
+    #    st.write(f"Média: {media1:.2f}, Mediana: {mediana1}")
 
-    with col2:
-        st.write("Créditos Função 2")
-        fig3, ax3 = plt.subplots()
-        ax3.hist(df["Créditos Função 2"], bins=20, color="salmon", edgecolor="black")
-        ax3.set_xlabel("Créditos")
-        ax3.set_ylabel("Frequência")
-        ax3.set_title("Distribuição dos Créditos Função 2")
-        st.pyplot(fig3)
-        media2 = df["Créditos Função 2"].mean()
-        mediana2 = df["Créditos Função 2"].median()
-        st.write(f"Média: {media2:.2f}, Mediana: {mediana2}")
+    #with col2:
+    #    st.write("Créditos Função 2")
+    #    fig3, ax3 = plt.subplots()
+    #    ax3.hist(df["Créditos Função 2"], bins=20, color="salmon", edgecolor="black")
+    #    ax3.set_xlabel("Créditos")
+    #    ax3.set_ylabel("Frequência")
+    #    ax3.set_title("Distribuição dos Créditos Função 2")
+    #    st.pyplot(fig3)
+    #    media2 = df["Créditos Função 2"].mean()
+    #    mediana2 = df["Créditos Função 2"].median()
+    #    st.write(f"Média: {media2:.2f}, Mediana: {mediana2}")
 
-    st.subheader("3. Análise de Retenção de Usuários")
+    #st.subheader("3. Análise de Retenção de Usuários")
     # Calcula a diferença entre o primeiro e o último acesso para cada usuário
     
-    df_reten = df.groupby("Usuario").agg(primeiro_acesso=("Data", "min"), ultimo_acesso=("Data", "max")).reset_index()
-    df_reten["dif_dias"] = ((df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]) / pd.Timedelta(days=1)).astype(int)
-    thresholds = [30, 60, 90]
-    for t in thresholds:
-        taxa = (df_reten["dif_dias"] >= t).mean() * 100
-        st.write(f"Taxa de retenção após {t} dias: {taxa:.2f}%")
+    #df_reten = df.groupby("Usuario").agg(primeiro_acesso=("Data", "min"), ultimo_acesso=("Data", "max")).reset_index()
+    #df_reten["dif_dias"] = (df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]).dt.days
+    #df_reten["dif_dias"] = ((df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]) / pd.Timedelta(days=1)).astype(int)
+    #thresholds = [30, 60, 90]
+    #for t in thresholds:
+    #    taxa = (df_reten["dif_dias"] >= t).mean() * 100
+    #    st.write(f"Taxa de retenção após {t} dias: {taxa:.2f}%")
 
-    st.markdown("### Relatório Resumido")
-    st.write("O relatório evidencia o crescimento de usuários, a distribuição dos créditos disponíveis e a taxa de retenção dos clientes.")
+    #st.markdown("### Relatório Resumido")
+    #st.write("O relatório evidencia o crescimento de usuários, a distribuição dos créditos disponíveis e a taxa de retenção dos clientes.")
 
 
 
