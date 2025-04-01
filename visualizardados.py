@@ -43,7 +43,7 @@ else:
     # Leitura dos dados
     #df = pd.read_csv(uploaded_file)
     df = pd.DataFrame(saida,columns=["Usuario","Data","Fonte","Obs","Créditos Função 1","Créditos Função 2"])
-    df = df[["Usuario","Data","Créditos Função 1","Créditos Função 2"]][:-1]
+    df = df[["Usuario","Data","Créditos Função 1","Créditos Função 2"]][:-2]
     
     st.title("Análise de Log de Registro dos Clientes")
     #df = pd.read_csv(uploaded_file)
