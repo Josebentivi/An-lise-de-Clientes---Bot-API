@@ -5,10 +5,6 @@ import seaborn as sns
 import warnings
 import requests
 import matplotlib.pyplot as plt
-#estilos = [ 'dark_background', 'fast', 'fivethirtyeight','Solarize_Light2', '_classic_test_patch', '_mpl-gallery', '_mpl-gallery-nogrid', 'bmh', 'classic', 'ggplot', 'grayscale', 'seaborn-v0_8', 'seaborn-v0_8-bright', 'seaborn-v0_8-colorblind', 'seaborn-v0_8-dark', 'seaborn-v0_8-dark-palette', 'seaborn-v0_8-darkgrid', 'seaborn-v0_8-deep', 'seaborn-v0_8-muted', 'seaborn-v0_8-notebook', 'seaborn-v0_8-paper', 'seaborn-v0_8-pastel', 'seaborn-v0_8-poster', 'seaborn-v0_8-talk', 'seaborn-v0_8-ticks', 'seaborn-v0_8-white', 'seaborn-v0_8-whitegrid', 'tableau-colorblind10']
-#plt.style.use('seaborn-v0_8-pastel')
-#plt.style.use('dark_background') 
-            
 
 # Suppress Streamlit's ScriptRunContext warning
 warnings.filterwarnings("ignore", message="missing ScriptRunContext")
@@ -85,6 +81,19 @@ else:
             st.dataframe(contagem_acoes)
 
             # Gráfico de barras para a frequência das ações
+            #estilos = [ 'dark_background', 'fast', 'fivethirtyeight','Solarize_Light2', '_classic_test_patch', '_mpl-gallery', '_mpl-gallery-nogrid',]
+            estilos = [ 'bmh', 'classic', 'ggplot', 'grayscale', 'seaborn-v0_8', 'seaborn-v0_8-bright', 'seaborn-v0_8-colorblind', 'seaborn-v0_8-dark', 'seaborn-v0_8-dark-palette', 'seaborn-v0_8-darkgrid', 'seaborn-v0_8-deep', 'seaborn-v0_8-muted', 'seaborn-v0_8-notebook', 'seaborn-v0_8-paper', 'seaborn-v0_8-pastel', 'seaborn-v0_8-poster', 'seaborn-v0_8-talk', 'seaborn-v0_8-ticks', 'seaborn-v0_8-white', 'seaborn-v0_8-whitegrid', 'tableau-colorblind10']
+            for estilo in estilos:
+                plt.style.use(estilo)
+                st.text(f"Estilo utilizado: {estilo}")
+                fig1, ax1 = plt.subplots(figsize=(10, 6))
+                sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
+                ax1.set_title("Frequência de Ações")
+                st.pyplot(fig1)
+                plt.close(fig1)  # Fecha a figura para liberar memória
+                
+            plt.style.use('dark_background')
+            st.text(f"Estilo utilizado: {'dark_background'}")
             fig1, ax1 = plt.subplots(figsize=(10, 6))
             sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
             ax1.set_title("Frequência de Ações")
