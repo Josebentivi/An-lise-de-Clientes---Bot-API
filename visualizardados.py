@@ -81,13 +81,7 @@ else:
             st.dataframe(contagem_acoes)
 
             # Gráfico de barras para a frequência das ações
-            sns.set_style("dark", {
-                "axes.facecolor": "black",
-                "axes.edgecolor": "white",
-                "text.color": "white",
-                "xtick.color": "white",
-                "ytick.color": "white"
-            })
+            plt.style.use('dark_background')
             fig1, ax1 = plt.subplots(figsize=(10, 6))
             sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
             ax1.set_title("Frequência de Ações")
