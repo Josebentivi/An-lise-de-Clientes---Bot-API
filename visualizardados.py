@@ -125,7 +125,7 @@ else:
 
             # 5. Heatmap: Atividade por Hora e Dia da Semana
             st.subheader("Heatmap de Atividade (Hora vs Dia da Semana)")
-            pivot_table = df.pivot_table(index='Dia da Semana', columns='Hora', values='Acao', aggfunc='count').fillna(0)
+            pivot_table = df.pivot_table(index='Dia', columns='Hora', values='Acao', aggfunc='count').fillna(0)
             # Reordenar dias da semana
             ordem_dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             pivot_table = pivot_table.reindex(ordem_dias)
