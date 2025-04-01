@@ -89,14 +89,6 @@ else:
             ax1.set_title("Frequência de Ações")
             st.pyplot(fig1)
             plt.close(fig1)  # Fecha a figura para liberar memória
-                
-            plt.style.use('dark_background')
-            st.text(f"Estilo utilizado: {'dark_background'}")
-            fig1, ax1 = plt.subplots(figsize=(10, 6))
-            sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
-            ax1.set_title("Frequência de Ações")
-            st.pyplot(fig1)
-            plt.close(fig1)  # Fecha a figura para liberar memória
 
             # 2. Evolução Temporal das Ações (Diária)
             st.subheader("Evolução Temporal das Ações")
