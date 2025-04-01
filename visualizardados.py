@@ -119,7 +119,7 @@ else:
             st.dataframe(usuarios_atividade.head(10))
             
             fig3, ax3 = plt.subplots(figsize=(10, 6))
-            sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3,x='Ações', y='Usuários')
+            sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
             ax3.set_title("Distribuição do Número de Ações por Usuário")
             st.pyplot(fig3)
 
