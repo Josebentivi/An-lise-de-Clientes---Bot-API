@@ -20,6 +20,95 @@ chave_secreta = st.text_input("Senha de acesso", type="password")
 if not chave_secreta:
     st.info("Por favor, adicione a sua senha de acesso.", icon="🗝️")
 else:    
+    url = "http://52.2.202.37/streamlit/"
+    data = {"cliente": chave_secreta,
+            "produto": "jurisaiusuarios"}
+    response = requests.post(url, json=data, timeout=5*60)
+    if response.status_code == 200:  
+        saida = response.json()["saida"]
+        print(saida)
+        erro = response.json()["erro"]
+        print(erro)
+    else:  
+        print("Erro na requisição")
+        print(response.status_code)
+        print(response.text)
+        st.stop()    
+
+    # Upload do arquivo CSV
+    #st.sidebar.header("Carregar arquivo CSV")
+    #uploaded_file = st.sidebar.file_uploader("Escolha um arquivo CSV", type="csv")
+
+    #if uploaded_file is not None:
+    # Leitura dos dados
+    #df = pd.read_csv(uploaded_file)
+    df = pd.DataFrame(saida,columns=["Usuario","Data","Fonte","Obs","Créditos Função 1","Créditos Função 2"])
+    
+    st.subheader("Visão Geral dos Dados")
+    st.dataframe(df.head())
+
+    # ----------------------------
+    # 1. Análise de Crescimento de Usuários
+    # ----------------------------
+    df['Mes'] = df['Data'].dt.to_period('M').dt.to_timestamp()
+    usuarios_por_mes = df.groupby('Mes')['Usuario'].nunique().reset_index()
+
+    st.subheader("Crescimento de Usuários")
+    fig1, ax1 = plt.subplots()
+    ax1.plot(usuarios_por_mes['Mes'], usuarios_por_mes['Usuario'], marker='o', linestyle='-')
+    ax1.set_xlabel("Mês")
+    ax1.set_ylabel("Número de Usuários")
+    ax1.set_title("Novos Usuários por Mês")
+    st.pyplot(fig1)
+
+    # ----------------------------
+    # 2. Análise de Disponibilidade de Créditos
+    # ----------------------------
+    df['Total Créditos'] = df['Créditos Função 1'] + df['Créditos Função 2']
+
+    st.subheader("Disponibilidade de Créditos")
+    fig2, ax2 = plt.subplots()
+    ax2.hist(df['Total Créditos'], bins=20, color='skyblue', edgecolor='black')
+    ax2.set_xlabel("Créditos")
+    ax2.set_ylabel("Frequência")
+    ax2.set_title("Distribuição dos Créditos Disponíveis")
+    st.pyplot(fig2)
+
+    st.write("Média dos Créditos:", df['Total Créditos'].mean())
+    st.write("Mediana dos Créditos:", df['Total Créditos'].median())
+
+    # ----------------------------
+    # 3. Análise de Retenção de Usuários
+    # ----------------------------
+    # Considera-se retenção se o usuário acessar novamente após o cadastro.
+    st.subheader("Retenção de Usuários")
+    retention_periods = [30, 60, 90]  # períodos em dias
+    df_sorted = df.sort_values(by=['Usuario', 'Data'])
+    first_access = df_sorted.groupby('Usuario')['Data'].first().reset_index()
+    second_access = df_sorted.groupby('Usuario')['Data'].nth(1).reset_index()
+    merged = pd.merge(first_access, second_access, on='Usuario', suffixes=('_first', '_second'))
+    merged['diff'] = (merged['Data_second'] - merged['Data_first']).dt.days
+
+    retention_results = {}
+    total_users = first_access.shape[0]
+    for period in retention_periods:
+        retained = (merged['diff'] <= period).sum()
+        retention_rate = (retained / total_users) * 100 if total_users else 0
+        retention_results[f"{period} dias"] = round(retention_rate, 2)
+    
+    st.write("Taxas de Retenção (%):", retention_results)
+
+    # ----------------------------
+    # Relatório Resumido
+    # ----------------------------
+    st.subheader("Relatório Resumido")
+    st.markdown("""
+    - Crescimento de Usuários: Gráfico de linha mostrando a quantidade de novos usuários por mês.
+    - Disponibilidade de Créditos: Histograma com média e mediana dos créditos disponíveis.
+    - Retenção de Usuários: Taxas de retorno em 30, 60 e 90 dias após o cadastro.
+    """)
+
+
     st.title("Dashboard de Visualização do comportamento de clientes - JurisAI")
 
     url = "http://52.2.202.37/streamlit/"
