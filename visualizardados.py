@@ -168,7 +168,7 @@ else:
             st.dataframe(df.tail(40))
 
             # 1. Frequência e Volume de Ações
-            st.subheader("Contagem de Ações")
+            st.subheader("Contagem de Ações do Servidor")
             contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
             contagem_acoes.columns = ['Acao', 'Contagem']
             st.dataframe(contagem_acoes)
@@ -183,7 +183,7 @@ else:
             plt.close(fig1)  # Fecha a figura para liberar memória
 
             # 1.5. Frequência e Volume de Ações do Usuário
-            st.subheader("Contagem de Ações")
+            st.subheader("Contagem de Ações do Usuário")
             contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
             contagem_acoes.columns = ['Acao', 'Contagem']
             st.dataframe(contagem_acoes)
