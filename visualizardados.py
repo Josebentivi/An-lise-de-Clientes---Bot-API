@@ -45,69 +45,66 @@ else:
     df = pd.DataFrame(saida,columns=["Usuario","Data","Fonte","Obs","Créditos Função 1","Créditos Função 2"])
     df = df[["Usuario","Data","Créditos Função 1","Créditos Função 2"]]
     
-    st.subheader("Visão Geral dos Dados")
-    st.dataframe(df.head())
+    st.title("Análise de Log de Registro dos Clientes")
+    #df = pd.read_csv(uploaded_file)
+    df["Data"] = pd.to_datetime(df["Data"], format="%Y/%m/%d %H:%M:%S")
+    st.header("Visualização dos Dados")
+    st.write(df.head())
 
-    # ----------------------------
-    # 1. Análise de Crescimento de Usuários
-    # ----------------------------
-    df['Mes'] = df['Data'].dt.to_period('M').dt.to_timestamp()
-    usuarios_por_mes = df.groupby('Mes')['Usuario'].nunique().reset_index()
-
-    st.subheader("Crescimento de Usuários")
+    st.subheader("1. Análise de Crescimento de Usuários")
+    # Considera o primeiro registro de cada usuário
+    df_first = df.sort_values("Data").drop_duplicates(subset="Usuario", keep="first")
+    df_first["AnoMes"] = df_first["Data"].dt.to_period("M").astype(str)
+    crescimento = df_first.groupby("AnoMes").size().reset_index(name="Novos Usuários")
     fig1, ax1 = plt.subplots()
-    ax1.plot(usuarios_por_mes['Mes'], usuarios_por_mes['Usuario'], marker='o', linestyle='-')
-    ax1.set_xlabel("Mês")
-    ax1.set_ylabel("Número de Usuários")
-    ax1.set_title("Novos Usuários por Mês")
+    ax1.plot(crescimento["AnoMes"], crescimento["Novos Usuários"], marker="o")
+    ax1.set_xlabel("Ano/Mês")
+    ax1.set_ylabel("Novos Usuários")
+    ax1.set_title("Crescimento de Usuários ao longo do tempo")
+    plt.xticks(rotation=45)
     st.pyplot(fig1)
 
-    # ----------------------------
-    # 2. Análise de Disponibilidade de Créditos
-    # ----------------------------
-    df['Total Créditos'] = df['Créditos Função 1'] + df['Créditos Função 2']
+    st.subheader("2. Análise de Disponibilidade de Créditos")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("Créditos Função 1")
+        fig2, ax2 = plt.subplots()
+        ax2.hist(df["Créditos Função 1"], bins=20, color="skyblue", edgecolor="black")
+        ax2.set_xlabel("Créditos")
+        ax2.set_ylabel("Frequência")
+        ax2.set_title("Distribuição dos Créditos Função 1")
+        st.pyplot(fig2)
+        media1 = df["Créditos Função 1"].mean()
+        mediana1 = df["Créditos Função 1"].median()
+        st.write(f"Média: {media1:.2f}, Mediana: {mediana1}")
 
-    st.subheader("Disponibilidade de Créditos")
-    fig2, ax2 = plt.subplots()
-    ax2.hist(df['Total Créditos'], bins=20, color='skyblue', edgecolor='black')
-    ax2.set_xlabel("Créditos")
-    ax2.set_ylabel("Frequência")
-    ax2.set_title("Distribuição dos Créditos Disponíveis")
-    st.pyplot(fig2)
+    with col2:
+        st.write("Créditos Função 2")
+        fig3, ax3 = plt.subplots()
+        ax3.hist(df["Créditos Função 2"], bins=20, color="salmon", edgecolor="black")
+        ax3.set_xlabel("Créditos")
+        ax3.set_ylabel("Frequência")
+        ax3.set_title("Distribuição dos Créditos Função 2")
+        st.pyplot(fig3)
+        media2 = df["Créditos Função 2"].mean()
+        mediana2 = df["Créditos Função 2"].median()
+        st.write(f"Média: {media2:.2f}, Mediana: {mediana2}")
 
-    st.write("Média dos Créditos:", df['Total Créditos'].mean())
-    st.write("Mediana dos Créditos:", df['Total Créditos'].median())
+    st.subheader("3. Análise de Retenção de Usuários")
+    # Calcula a diferença entre o primeiro e o último acesso para cada usuário
+    df_reten = df.groupby("Usuario").agg(primeiro_acesso=("Data", "min"),
+                                          ultimo_acesso=("Data", "max")).reset_index()
+    df_reten["dif_dias"] = (df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]).dt.days
+    thresholds = [30, 60, 90]
+    for t in thresholds:
+        taxa = (df_reten["dif_dias"] >= t).mean() * 100
+        st.write(f"Taxa de retenção após {t} dias: {taxa:.2f}%")
 
-    # ----------------------------
-    # 3. Análise de Retenção de Usuários
-    # ----------------------------
-    # Considera-se retenção se o usuário acessar novamente após o cadastro.
-    st.subheader("Retenção de Usuários")
-    retention_periods = [30, 60, 90]  # períodos em dias
-    df_sorted = df.sort_values(by=['Usuario', 'Data'])
-    first_access = df_sorted.groupby('Usuario')['Data'].first().reset_index()
-    second_access = df_sorted.groupby('Usuario')['Data'].nth(1).reset_index()
-    merged = pd.merge(first_access, second_access, on='Usuario', suffixes=('_first', '_second'))
-    merged['diff'] = (merged['Data_second'] - merged['Data_first']).dt.days
+    st.markdown("### Relatório Resumido")
+    st.write("O relatório evidencia o crescimento de usuários, a distribuição dos créditos disponíveis e a taxa de retenção dos clientes.")
 
-    retention_results = {}
-    total_users = first_access.shape[0]
-    for period in retention_periods:
-        retained = (merged['diff'] <= period).sum()
-        retention_rate = (retained / total_users) * 100 if total_users else 0
-        retention_results[f"{period} dias"] = round(retention_rate, 2)
-    
-    st.write("Taxas de Retenção (%):", retention_results)
 
-    # ----------------------------
-    # Relatório Resumido
-    # ----------------------------
-    st.subheader("Relatório Resumido")
-    st.markdown("""
-    - Crescimento de Usuários: Gráfico de linha mostrando a quantidade de novos usuários por mês.
-    - Disponibilidade de Créditos: Histograma com média e mediana dos créditos disponíveis.
-    - Retenção de Usuários: Taxas de retorno em 30, 60 e 90 dias após o cadastro.
-    """)
+
 
 
     st.title("Dashboard de Visualização do comportamento de clientes - JurisAI")
