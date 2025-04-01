@@ -189,6 +189,7 @@ else:
             ordered_actions = ['Consulra PDF chat utilizado', 'Consulta Vade utilizada', 'Consulta Servidor utilizada', 'Consulta Doutrina utilizada', 'Consulta JurisBrasil utilizada', 'Consulta Leis utilizada', 'Criar documentação utilizada', 'Audio utilizado', 'Voz utilizada', 'Imagem carregada', 'PDF enviada', 'PDF enviado', 'Papo utilizado', 'Consulta removida', 'Consulta adicionada', 'Bateria removida', 'Bateria adicionada', 'Documentação utilizada', 'Vade utilizado', 'CGU utilizada', 'Doutrina utilizada', 'Leis utilizada', 'Consulta PDF utilizada', 'Bibliografia utilizada']
             contagem_acoes = contagem_acoes.set_index("Acao").reindex(ordered_actions, fill_value=0).reset_index()
             contagem_acoes = contagem_acoes[contagem_acoes['Contagem'] > 0]
+            contagem_acoes = contagem_acoes.sort_values("Contagem", ascending=False)
 
             # Gráfico de barras para a frequência das ações
             fig1, ax1 = plt.subplots(figsize=(10, 6))
