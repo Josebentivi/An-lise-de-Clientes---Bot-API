@@ -117,14 +117,15 @@ else:
             usuarios_atividade = df['Usuario'].value_counts().reset_index()
             usuarios_atividade.columns = ['Usuario', 'Acoes']
             st.dataframe(usuarios_atividade.head(10))
+            
             fig3, ax3 = plt.subplots(figsize=(10, 6))
             sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
             ax3.set_title("Distribuição do Número de Ações por Usuário")
-            st.pyplot(fig3)
+            st.pyplot(fig3,x='Ações', y='Usuários')
 
             # 5. Heatmap: Atividade por Hora e Dia da Semana
             st.subheader("Heatmap de Atividade (Hora vs Dia da Semana)")
-            pivot_table = df.pivot_table(index='Dia_da_Semana', columns='Hora', values='Acao', aggfunc='count').fillna(0)
+            pivot_table = df.pivot_table(index='Dia da Semana', columns='Hora', values='Acao', aggfunc='count').fillna(0)
             # Reordenar dias da semana
             ordem_dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             pivot_table = pivot_table.reindex(ordem_dias)
