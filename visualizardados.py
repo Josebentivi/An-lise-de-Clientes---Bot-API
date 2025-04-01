@@ -81,11 +81,14 @@ else:
             st.dataframe(contagem_acoes)
 
             # Gráfico de barras para a frequência das ações
-            plt.style.use('dark_background')
-            fig1, ax1 = plt.subplots(figsize=(10, 6))
-            sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
-            ax1.set_title("Frequência de Ações")
-            st.pyplot(fig1)
+            estilos = plt.style.available
+            for estilo in estilos:
+                plt.style.use(estilo)
+                st.text(f"Estilo utilizado: {estilo}")
+                fig1, ax1 = plt.subplots(figsize=(10, 6))
+                sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
+                ax1.set_title("Frequência de Ações")
+                st.pyplot(fig1)
 
             # 2. Evolução Temporal das Ações (Diária)
             st.subheader("Evolução Temporal das Ações")
