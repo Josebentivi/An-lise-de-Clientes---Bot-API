@@ -242,7 +242,8 @@ else:
             # Reordenar dias da semana
             ordem_dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             pivot_table = pivot_table.reindex(ordem_dias)
-            pivot_table.columns = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+
+            pivot_table.index = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
             fig4, ax4 = plt.subplots(figsize=(12, 6))
             sns.heatmap(pivot_table, cmap="YlGnBu", ax=ax4)
             ax4.set_title("Número de Ações por Hora e Dia da Semana")
