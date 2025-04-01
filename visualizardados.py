@@ -71,8 +71,8 @@ else:
             df['Acao_Agrupada'] = df['Acao'].apply(agrupar_acoes)
 
             # Exibição dos dados carregados
-            st.subheader("Visualização dos Dados")
-            st.dataframe(df)
+            st.subheader("Visualização das Ultimas Interações")
+            st.dataframe(df.tail(40))
 
             # 1. Frequência e Volume de Ações
             st.subheader("Contagem de Ações")
@@ -81,6 +81,13 @@ else:
             st.dataframe(contagem_acoes)
 
             # Gráfico de barras para a frequência das ações
+            sns.set_style("dark", {
+                "axes.facecolor": "black",
+                "axes.edgecolor": "white",
+                "text.color": "white",
+                "xtick.color": "white",
+                "ytick.color": "white"
+            })
             fig1, ax1 = plt.subplots(figsize=(10, 6))
             sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
             ax1.set_title("Frequência de Ações")
