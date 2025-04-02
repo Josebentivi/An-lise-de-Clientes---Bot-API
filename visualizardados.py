@@ -23,7 +23,7 @@ def Carregando():
             porcentagem += 25
             my_bar.progress(porcentagem, text=texto)
             sleep(2)
-        cols.empty()
+        my_bar.empty()
 
 #x = threading.Thread(target=alarme, args=())
 #x.start()
