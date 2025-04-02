@@ -5,16 +5,34 @@ import seaborn as sns
 import warnings
 import requests
 import matplotlib.pyplot as plt
+import time
+import os
+import threading
 #estilos = [ 'dark_background', 'fast', 'fivethirtyeight','Solarize_Light2', '_classic_test_patch', '_mpl-gallery', '_mpl-gallery-nogrid', 'bmh', 'classic', 'ggplot', 'grayscale', 'seaborn-v0_8', 'seaborn-v0_8-bright', 'seaborn-v0_8-colorblind', 'seaborn-v0_8-dark', 'seaborn-v0_8-dark-palette', 'seaborn-v0_8-darkgrid', 'seaborn-v0_8-deep', 'seaborn-v0_8-muted', 'seaborn-v0_8-notebook', 'seaborn-v0_8-paper', 'seaborn-v0_8-pastel', 'seaborn-v0_8-poster', 'seaborn-v0_8-talk', 'seaborn-v0_8-ticks', 'seaborn-v0_8-white', 'seaborn-v0_8-whitegrid', 'tableau-colorblind10']
 plt.style.use('seaborn-v0_8-pastel')
 #plt.style.use('dark_background') 
             
+os.environ["TZ"] = "America/Sao_Paulo"
+time.tzset()
+
+
+def alarme():
+    placeholder = st.empty()
+    placeholder.progress(0, "Wait for it...")
+    time.sleep(1)
+    placeholder.progress(50, "Wait for it...")
+    time.sleep(2)
+    placeholder.progress(100, "Wait for it...")
+    time.sleep(5)
 
 # Suppress Streamlit's ScriptRunContext warning
 warnings.filterwarnings("ignore", message="missing ScriptRunContext")
 
 # Configuração inicial da página
 st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wide")
+
+x = threading.Thread(target=alarme, args=())
+x.start()
 
 chave_secreta = st.text_input("Senha de acesso", type="password")
 if not chave_secreta:
