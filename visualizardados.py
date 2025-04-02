@@ -52,7 +52,7 @@ else:
     st.markdown(
         f"""
         <div style="background-color: #0e1117; padding: 10px; border-radius: 5px; text-align: center;">
-            <p style="color: white; font-size: 18px; margin: 0;">Número de clientes</p>
+            <p style="color: white; font-size: 18px; margin: 0;">Número de usuários</p>
             <p style="color: green; font-size: 32px; font-weight: bold; margin: 0;">{total_clientes}</p>
         </div>
         """,
