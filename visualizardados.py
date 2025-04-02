@@ -21,7 +21,7 @@ def Carregando():
         CarregandoInicio = ["Carregando leis e jurisprudência...","Carregando doutrinas...","Finalizando melhoria...","Pronto!"]
         for texto in CarregandoInicio:
             porcentagem += 20
-            my_bar.progress(porcentagem + 1, text=texto)
+            my_bar.progress(porcentagem, text=texto)
             sleep(2)
 
 #x = threading.Thread(target=alarme, args=())
