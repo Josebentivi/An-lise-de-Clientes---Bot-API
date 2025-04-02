@@ -48,16 +48,38 @@ else:
 
     # Vimero de clientes
     total_clientes = df["Usuario"].nunique()
-
-    st.markdown(
-        f"""
-        <div style="background-color: #0e1117; padding: 10px; border-radius: 5px; text-align: center;">
-            <p style="color: white; font-size: 18px; margin: 0;">Número de usuários</p>
-            <p style="color: green; font-size: 32px; font-weight: bold; margin: 0;">{total_clientes}</p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    col1, col2, col3 = st.columns(3)
+    ads=88
+    with col1:
+        st.markdown(
+            f"""
+            <div style="background-color: #0e1117; padding: 10px; border-radius: 5px; text-align: center;">
+                <p style="color: white; font-size: 18px; margin: 0;">Número de usuários</p>
+                <p style="color: white; font-size: 32px; font-weight: bold; margin: 0;">{total_clientes}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with col2:
+        st.markdown(
+            f"""
+            <div style="background-color: #0e1117; padding: 10px; border-radius: 5px; text-align: center;">
+                <p style="color: white; font-size: 18px; margin: 0;">Acesso Ads</p>
+                <p style="color: green; font-size: 32px; font-weight: bold; margin: 0;">{total_clientes-ads}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    with col3:
+        st.markdown(
+            f"""
+            <div style="background-color: #0e1117; padding: 10px; border-radius: 5px; text-align: center;">
+                <p style="color: white; font-size: 18px; margin: 0;">Acesso Ads</p>
+                <p style="color: blue; font-size: 32px; font-weight: bold; margin: 0;">{ads}</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     
     st.title("Análise de Log de Registro dos Clientes")
     #df = pd.read_csv(uploaded_file)
