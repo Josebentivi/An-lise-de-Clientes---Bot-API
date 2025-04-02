@@ -20,7 +20,7 @@ def Carregando():
         sleep(2)
         CarregandoInicio = ["Carregando leis e jurisprudência...","Carregando doutrinas...","Finalizando melhoria...","Pronto!"]
         for texto in CarregandoInicio:
-            porcentagem += 20
+            porcentagem += 25
             my_bar.progress(porcentagem, text=texto)
             sleep(2)
 
