@@ -14,22 +14,22 @@ plt.style.use('seaborn-v0_8-pastel')
 
 def alarme():
     placeholder = st.empty()
-    placeholder.progress(0, "Wait for it...")
+    placeholder.progress(0, "Carregando...")
     sleep(1)
-    placeholder.progress(50, "Wait for it...")
-    sleep(2)
-    placeholder.progress(100, "Wait for it...")
-    sleep(5)
+    placeholder.progress(50, "Quase lá...")
+    sleep(1)
+    placeholder.progress(100, "Vamos lá!")
+    sleep(1)
+
+#x = threading.Thread(target=alarme, args=())
+#x.start()
 
 # Suppress Streamlit's ScriptRunContext warning
 warnings.filterwarnings("ignore", message="missing ScriptRunContext")
 
 # Configuração inicial da página
 st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wide")
-
-x = threading.Thread(target=alarme, args=())
-x.start()
-sleep(10)
+alarme()
 chave_secreta = st.text_input("Senha de acesso", type="password")
 if not chave_secreta:
     st.info("Por favor, adicione a sua senha de acesso.", icon="🗝️")
