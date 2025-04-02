@@ -17,12 +17,12 @@ def Carregando():
     cols = st.columns(3)
     with cols[1]:
         my_bar = st.progress(porcentagem, text="Aprimorando plataforma...")
-        sleep(2)
+        sleep(1)
         CarregandoInicio = ["Carregando leis e jurisprudência...","Carregando doutrinas...","Finalizando melhoria...","Pronto!"]
         for texto in CarregandoInicio:
             porcentagem += 25
             my_bar.progress(porcentagem, text=texto)
-            sleep(2)
+            sleep(1)
         my_bar.empty()
 
 #x = threading.Thread(target=alarme, args=())
