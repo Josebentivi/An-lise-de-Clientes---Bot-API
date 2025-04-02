@@ -45,6 +45,10 @@ else:
     df = pd.DataFrame(saida,columns=["Usuario","Data","Fonte","Obs","Créditos Função 1","Créditos Função 2"])
     df = df[["Usuario","Data","Créditos Função 1","Créditos Função 2"]]
     #df = df[~df["Data"].astype(str).str.contains("2025-04")]
+
+    # Vimero de clientes
+    total_clientes = df["Usuario"].nunique()
+    st.markdown(f'<p style="color: green; font-size: 32px; font-weight: bold;">{total_clientes}</p>', unsafe_allow_html=True)
     
     st.title("Análise de Log de Registro dos Clientes")
     #df = pd.read_csv(uploaded_file)
@@ -52,7 +56,7 @@ else:
     st.header("Visualização dos Dados")
     st.write(df)
 
-    st.subheader("1. Análise de Crescimento de Usuários")
+    st.subheader("Crescimento de Usuários")
     # Considera o primeiro registro de cada usuário
     df_first = df.sort_values("Data").drop_duplicates(subset="Usuario", keep="first")
     df_first["AnoMes"] = df_first["Data"].dt.to_period("M").astype(str)
@@ -60,7 +64,7 @@ else:
     fig1, ax1 = plt.subplots()
     ax1.plot(crescimento["AnoMes"], crescimento["Novos Usuários"], marker="o")
     ax1.set_xlabel("Ano/Mês")
-    ax1.set_ylabel("Número de Usuários")
+    ax1.set_ylabel("Número de Usuários Novos")
     ax1.set_title("Crescimento de Usuários ao longo do tempo")
     plt.xticks(rotation=45)
     st.pyplot(fig1)
