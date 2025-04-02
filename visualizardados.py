@@ -15,9 +15,9 @@ plt.style.use('seaborn-v0_8-pastel')
 def Carregando():
     porcentagem = 20
     cols = st.columns(3)
-    sleep(2)
     with cols[1]:
         my_bar = st.progress(0, text="Aprimorando plataforma...")
+        sleep(2)
         CarregandoInicio = ["Carregando leis e jurisprudência...","Carregando doutrinas...","Finalizando melhoria...","Pronto!"]
         for texto in CarregandoInicio:
             porcentagem += 20
