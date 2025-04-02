@@ -12,6 +12,9 @@ import threading
 plt.style.use('seaborn-v0_8-pastel')
 #plt.style.use('dark_background') 
 
+
+ads=92
+
 def Carregando():
     porcentagem = 0
     cols = st.columns(3)
@@ -69,7 +72,6 @@ else:
     # Vimero de clientes
     total_clientes = df["Usuario"].nunique()
     col1, col2, col3 = st.columns(3)
-    ads=88
     with col1:
         st.markdown(
             f"""
