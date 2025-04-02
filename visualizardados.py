@@ -12,16 +12,17 @@ import threading
 plt.style.use('seaborn-v0_8-pastel')
 #plt.style.use('dark_background') 
 
-def alarme():
+def Carregando():
+    porcentagem = 20
     cols = st.columns(3)
+    my_bar = st.progress(0, text="Aprimorando plataforma...")
+    sleep(2)
     with cols[1]:
-        placeholder = st.empty()
-        placeholder.progress(0, "Carregando...")
-        sleep(1)
-        placeholder.progress(50, "Quase lá...")
-        sleep(1)
-        placeholder.progress(100, "Vamos lá!")
-        sleep(1)
+        CarregandoInicio = ["Carregando leis e jurisprudência...","Carregando doutrinas...","Finalizando melhoria...","Pronto!"]
+        for texto in CarregandoInicio:
+            my_bar.progress(porcentagem + 1, text=texto)
+            porcentagem += 20
+            sleep(2)
 
 #x = threading.Thread(target=alarme, args=())
 #x.start()
@@ -31,7 +32,7 @@ warnings.filterwarnings("ignore", message="missing ScriptRunContext")
 
 # Configuração inicial da página
 st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wide")
-alarme()
+Carregando()
 chave_secreta = st.text_input("Senha de acesso", type="password")
 if not chave_secreta:
     st.info("Por favor, adicione a sua senha de acesso.", icon="🗝️")
