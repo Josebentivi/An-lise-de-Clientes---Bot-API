@@ -13,13 +13,15 @@ plt.style.use('seaborn-v0_8-pastel')
 #plt.style.use('dark_background') 
 
 def alarme():
-    placeholder = st.empty()
-    placeholder.progress(0, "Carregando...")
-    sleep(1)
-    placeholder.progress(50, "Quase lá...")
-    sleep(1)
-    placeholder.progress(100, "Vamos lá!")
-    sleep(1)
+    cols = st.columns(3)
+    with cols[1]:
+        placeholder = st.empty()
+        placeholder.progress(0, "Carregando...")
+        sleep(1)
+        placeholder.progress(50, "Quase lá...")
+        sleep(1)
+        placeholder.progress(100, "Vamos lá!")
+        sleep(1)
 
 #x = threading.Thread(target=alarme, args=())
 #x.start()
