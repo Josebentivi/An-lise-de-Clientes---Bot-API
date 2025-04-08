@@ -274,7 +274,7 @@ else:
             if not df_juris.empty:
                 resumo_juris = df_juris['Acao'].value_counts().reset_index()
                 resumo_juris.columns = ['Acao', 'Contagem']
-                st.dataframe(resumo_juris)
+                #st.dataframe(resumo_juris)
                 fig2, ax2 = plt.subplots(figsize=(6, 4))
                 sns.barplot(x='Acao', y='Contagem', data=resumo_juris, ax=ax2)
                 ax2.set_title("Consulta JurisBrasil: Concluída vs. Falhou")
@@ -286,7 +286,7 @@ else:
             st.subheader("Distribuição de Atividade dos Usuários")
             usuarios_atividade = df['Usuario'].value_counts().reset_index()
             usuarios_atividade.columns = ['Usuario', 'Acoes']
-            st.dataframe(usuarios_atividade.head(10))
+            #st.dataframe(usuarios_atividade.head(10))
             fig3, ax3 = plt.subplots(figsize=(10, 6))
             sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
             ax3.set_title("Distribuição do Número de Ações por Usuário")
@@ -317,7 +317,7 @@ else:
                 if len(df_usuario) >= 2:
                     df_usuario = df_usuario.sort_values("Data")
                     df_usuario['Tempo_entre'] = df_usuario['Data'].diff().dt.total_seconds()
-                    st.dataframe(df_usuario[['Data', 'Acao', 'Tempo_entre']])
+                    #st.dataframe(df_usuario[['Data', 'Acao', 'Tempo_entre']])
                     #st.write("Tempo médio entre ações (segundos): ", df_usuario['Tempo_entre'].mean())
                 else:
                     st.info("O usuário possui poucas ações para análise.")
