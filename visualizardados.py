@@ -108,7 +108,7 @@ else:
     #df = pd.read_csv(uploaded_file)
     df["Data"] = pd.to_datetime(df["Data"], format="%Y/%m/%d %H:%M:%S")
     st.header("Visualização dos Dados")
-    st.write(df)
+    #st.write(df)
 
     st.subheader("Crescimento de Usuários")
     # Considera o primeiro registro de cada usuário
@@ -223,13 +223,13 @@ else:
 
             # Exibição dos dados carregados
             st.subheader("Visualização das Ultimas Interações")
-            st.dataframe(df.tail(40))
+            #st.dataframe(df.tail(40))
 
             # 1. Frequência e Volume de Ações
             st.subheader("Contagem de Ações do Servidor")
             contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
             contagem_acoes.columns = ['Acao', 'Contagem']
-            st.dataframe(contagem_acoes)
+            #st.dataframe(contagem_acoes)
 
             # Gráfico de barras para a frequência das ações do Servidor
             fig1, ax1 = plt.subplots(figsize=(10, 6))
@@ -244,7 +244,7 @@ else:
             st.subheader("Contagem de Ações do Usuário")
             contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
             contagem_acoes.columns = ['Acao', 'Contagem']
-            st.dataframe(contagem_acoes)
+            #st.dataframe(contagem_acoes)
 
             ordered_actions = ['Consulra PDF chat utilizado', 'Consulta Vade utilizada', 'Consulta Servidor utilizada', 'Consulta Doutrina utilizada', 'Consulta JurisBrasil utilizada', 'Consulta Leis utilizada', 'Criar documentação utilizada', 'Audio utilizado', 'Voz utilizada', 'Imagem carregada', 'PDF enviada', 'PDF enviado', 'Papo utilizado', 'Consulta removida', 'Consulta adicionada', 'Bateria removida', 'Bateria adicionada', 'Documentação utilizada', 'Vade utilizado', 'CGU utilizada', 'Doutrina utilizada', 'Leis utilizada', 'Consulta PDF utilizada', 'Bibliografia utilizada']
             contagem_acoes = contagem_acoes.set_index("Acao").reindex(ordered_actions, fill_value=0).reset_index()
@@ -318,7 +318,7 @@ else:
                     df_usuario = df_usuario.sort_values("Data")
                     df_usuario['Tempo_entre'] = df_usuario['Data'].diff().dt.total_seconds()
                     st.dataframe(df_usuario[['Data', 'Acao', 'Tempo_entre']])
-                    st.write("Tempo médio entre ações (segundos): ", df_usuario['Tempo_entre'].mean())
+                    #st.write("Tempo médio entre ações (segundos): ", df_usuario['Tempo_entre'].mean())
                 else:
                     st.info("O usuário possui poucas ações para análise.")
     else:
