@@ -41,7 +41,7 @@ st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wid
 #Carregando()
 #chave_secreta = st.text_input("Senha de acesso", type="password")
 chave_secreta="JurisAI"
-if not chave_secreta:
+if not chave_secreta and False:
     st.info("Por favor, adicione a sua senha de acesso.", icon="🗝️")
 else:    
     url = "http://52.2.202.37/streamlit/"
