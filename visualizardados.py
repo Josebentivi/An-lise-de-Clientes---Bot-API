@@ -108,7 +108,7 @@ else:
     #df = pd.read_csv(uploaded_file)
     df["Data"] = pd.to_datetime(df["Data"], format="%Y/%m/%d %H:%M:%S")
     st.header("Visualização dos Dados")
-    #st.write(df)
+    st.write(df)
 
     st.subheader("Crescimento de Usuários")
     # Considera o primeiro registro de cada usuário
@@ -223,13 +223,13 @@ else:
 
             # Exibição dos dados carregados
             st.subheader("Visualização das Ultimas Interações")
-            #st.dataframe(df.tail(40))
+            st.dataframe(df.tail(40))
 
             # 1. Frequência e Volume de Ações
             st.subheader("Contagem de Ações do Servidor")
             contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
             contagem_acoes.columns = ['Acao', 'Contagem']
-            #st.dataframe(contagem_acoes)
+            st.dataframe(contagem_acoes)
 
             # Gráfico de barras para a frequência das ações do Servidor
             fig1, ax1 = plt.subplots(figsize=(10, 6))
@@ -286,7 +286,7 @@ else:
             st.subheader("Distribuição de Atividade dos Usuários")
             usuarios_atividade = df['Usuario'].value_counts().reset_index()
             usuarios_atividade.columns = ['Usuario', 'Acoes']
-            #st.dataframe(usuarios_atividade.head(10))
+            st.dataframe(usuarios_atividade.head(20))
             fig3, ax3 = plt.subplots(figsize=(10, 6))
             sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
             ax3.set_title("Distribuição do Número de Ações por Usuário")
@@ -317,8 +317,8 @@ else:
                 if len(df_usuario) >= 2:
                     df_usuario = df_usuario.sort_values("Data")
                     df_usuario['Tempo_entre'] = df_usuario['Data'].diff().dt.total_seconds()
-                    #st.dataframe(df_usuario[['Data', 'Acao', 'Tempo_entre']])
-                    #st.write("Tempo médio entre ações (segundos): ", df_usuario['Tempo_entre'].mean())
+                    st.dataframe(df_usuario[['Data', 'Acao', 'Tempo_entre']])
+                    st.write("Tempo médio entre ações (segundos): ", df_usuario['Tempo_entre'].mean())
                 else:
                     st.info("O usuário possui poucas ações para análise.")
     else:
