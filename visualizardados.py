@@ -295,14 +295,14 @@ else:
             st.pyplot(fig3)
 
             # 4.1. Análise de Comportamento do Usuário: Distribuição de Uso Ativo
-            st.dataframe(df[(df['Acao'] == 'Leis utilizada') | (df['Acao'] == 'Papo utilizado')])
             st.subheader("Distribuição de Uso Ativo dos Usuários")
+            #st.dataframe(df[(df['Acao'] == 'Leis utilizada') | (df['Acao'] == 'Papo utilizado')])
             usuarios_atividade = df[(df['Acao'] == 'Leis utilizada') | (df['Acao'] == 'Papo utilizado')]['Usuario'].value_counts().reset_index()
             usuarios_atividade.columns = ['Usuario', 'Acoes']
-            st.dataframe(usuarios_atividade.head(20))
+            st.dataframe(usuarios_atividade)
             fig3, ax3 = plt.subplots(figsize=(10, 6))
             sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
-            ax3.set_title("Distribuição do Número de Ações por Usuário")
+            ax3.set_title("Distribuição do Número de Ações de Uso Ativo por Usuário")
             ax3.set_xlabel("Interações")
             ax3.set_ylabel("Usuários")
             st.pyplot(fig3)
