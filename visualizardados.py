@@ -297,7 +297,7 @@ else:
             # 4.1. Análise de Comportamento do Usuário: Distribuição de Uso Ativo
             st.dataframe(df[(df['Acao'] == 'Leis utilizada') | (df['Acao'] == 'Papo utilizado')])
             st.subheader("Distribuição de Uso Ativo dos Usuários")
-            usuarios_atividade = df['Usuario'].value_counts().reset_index()
+            usuarios_atividade = df[(df['Acao'] == 'Leis utilizada') | (df['Acao'] == 'Papo utilizado')]['Usuario'].value_counts().reset_index()
             usuarios_atividade.columns = ['Usuario', 'Acoes']
             st.dataframe(usuarios_atividade.head(20))
             fig3, ax3 = plt.subplots(figsize=(10, 6))
