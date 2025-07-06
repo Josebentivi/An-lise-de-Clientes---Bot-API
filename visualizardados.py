@@ -13,7 +13,7 @@ plt.style.use('seaborn-v0_8-pastel')
 #plt.style.use('dark_background') 
 
 
-ads=156
+ads=175
 
 def Carregando():
     porcentagem = 0
