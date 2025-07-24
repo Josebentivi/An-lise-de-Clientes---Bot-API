@@ -223,7 +223,7 @@ else:
 
             # Exibição dos dados carregados
             st.subheader("Visualização das Ultimas Interações")
-            st.dataframe(df.tail(40))
+            st.dataframe(df.tail(50))
 
             # 1. Frequência e Volume de Ações
             st.subheader("Contagem de Ações do Servidor")
