@@ -235,7 +235,7 @@ else:
             retencao = df.groupby("Usuario")["Data"].agg(["min", "max"]).reset_index()
             retencao["Retencao_Dias"] = (retencao["max"] - retencao["min"]).dt.days
             st.write("Análise de Retenção de Usuários (em dias)")
-            st.dataframe(retencao)
+            st.dataframe(retencao.sort_values("Retencao_Dias", ascending=False))
 
             # Estatísticas básicas de retenção
             media_retencao = retencao["Retencao_Dias"].mean()
