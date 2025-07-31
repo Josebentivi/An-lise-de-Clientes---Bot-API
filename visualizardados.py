@@ -110,6 +110,18 @@ else:
     st.header("Visualização dos Dados")
     st.write(df)
 
+    # Plot do total de usuários por mês (cumulativo)
+    df_first = df.sort_values("Data").drop_duplicates(subset="Usuario", keep="first")
+    df_first["AnoMes"] = df_first["Data"].dt.to_period("M").astype(str)
+    total_users_by_month = df_first.groupby("AnoMes").size().cumsum().reset_index(name="Total Usuários")
+    fig, ax = plt.subplots()
+    ax.plot(total_users_by_month["AnoMes"], total_users_by_month["Total Usuários"], marker="o", linestyle="-")
+    ax.set_xlabel("Ano/Mês")
+    ax.set_ylabel("Total de Usuários")
+    ax.set_title("Total de Usuários por Mês")
+    plt.xticks(rotation=45)
+    st.pyplot(fig)
+
     st.subheader("Crescimento de Usuários")
     # Considera o primeiro registro de cada usuário
     df_first = df.sort_values("Data").drop_duplicates(subset="Usuario", keep="first")
@@ -149,16 +161,16 @@ else:
     #    mediana2 = df["Créditos Função 2"].median()
     #    st.write(f"Média: {media2:.2f}, Mediana: {mediana2}")
 
-    #st.subheader("3. Análise de Retenção de Usuários")
+    st.subheader("Análise de Retenção de Usuários")
     # Calcula a diferença entre o primeiro e o último acesso para cada usuário
     
-    #df_reten = df.groupby("Usuario").agg(primeiro_acesso=("Data", "min"), ultimo_acesso=("Data", "max")).reset_index()
-    #df_reten["dif_dias"] = (df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]).dt.days
-    #df_reten["dif_dias"] = ((df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]) / pd.Timedelta(days=1)).astype(int)
-    #thresholds = [30, 60, 90]
-    #for t in thresholds:
-    #    taxa = (df_reten["dif_dias"] >= t).mean() * 100
-    #    st.write(f"Taxa de retenção após {t} dias: {taxa:.2f}%")
+    df_reten = df.groupby("Usuario").agg(primeiro_acesso=("Data", "min"), ultimo_acesso=("Data", "max")).reset_index()
+    df_reten["dif_dias"] = (df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]).dt.days
+    df_reten["dif_dias"] = ((df_reten["ultimo_acesso"] - df_reten["primeiro_acesso"]) / pd.Timedelta(days=1)).astype(int)
+    thresholds = [30, 60, 90]
+    for t in thresholds:
+        taxa = (df_reten["dif_dias"] >= t).mean() * 100
+        st.write(f"Taxa de retenção após {t} dias: {taxa:.2f}%")
 
     #st.markdown("### Relatório Resumido")
     #st.write("O relatório evidencia o crescimento de usuários, a distribuição dos créditos disponíveis e a taxa de retenção dos clientes.")
