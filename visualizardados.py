@@ -238,10 +238,10 @@ else:
             st.dataframe(retencao.sort_values("Retencao_Dias", ascending=False))
 
             # Estatísticas básicas de retenção
-            media_retencao = retencao["Retencao_Dias"].mean()
-            mediana_retencao = retencao["Retencao_Dias"].median()
-            st.write(f"Tempo médio de retenção: {media_retencao:.1f} dias")
-            st.write(f"Mediana do tempo de retenção: {mediana_retencao} dias")
+            media_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].mean()
+            mediana_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].median()
+            st.write(f"Tempo médio de retenção para usuários com retenção positiva: {media_retencao:.2f} dias")
+            st.write(f"Mediana do tempo de retenção para usuários com retenção positiva: {mediana_retencao} dias")
 
             # Visualização da distribuição de retenção
             fig_ret, ax_ret = plt.subplots(figsize=(10, 6))
