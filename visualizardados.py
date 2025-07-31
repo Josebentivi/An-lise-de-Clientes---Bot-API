@@ -234,6 +234,8 @@ else:
             # Cálculo da retenção: tempo entre o primeiro e o último acesso para cada usuário
             retencao = df.groupby("Usuario")["Data"].agg(["min", "max"]).reset_index()
             retencao["Retencao_Dias"] = (retencao["max"] - retencao["min"]).dt.days
+            mediana_retencao_total = retencao["Retencao_Dias"].count()
+            st.write(f"Número total de usuários analisados: {mediana_retencao_total}")
             st.write("Análise de Retenção de Usuários (em dias)")
             st.dataframe(retencao.sort_values("Retencao_Dias", ascending=False))
 
@@ -258,12 +260,10 @@ else:
             # Estatísticas básicas de retenção
             media_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].mean()
             mediana_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].median()
-            mediana_retencao_total = retencao["Retencao_Dias"].count()
             mediana_retencao_zero = retencao[retencao["Retencao_Dias"] == 0]["Retencao_Dias"].count()
             st.write(f"Tempo médio de retenção para usuários com retenção positiva: {media_retencao:.2f} dias")
             st.write(f"Mediana do tempo de retenção para usuários com retenção positiva: {mediana_retencao} dias")
             st.write(f"Número de usuários com retenção zero (Utilizaram apenas um dia): {mediana_retencao_zero}")
-            st.write(f"Número total de usuários analisados: {mediana_retencao_total}")
             st.write(f"Taxa de retenção: {(1-mediana_retencao_zero / mediana_retencao_total):.2%}")
 
 
