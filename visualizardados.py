@@ -237,12 +237,6 @@ else:
             st.write("Análise de Retenção de Usuários (em dias)")
             st.dataframe(retencao.sort_values("Retencao_Dias", ascending=False))
 
-            # Estatísticas básicas de retenção
-            media_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].mean()
-            mediana_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].median()
-            st.write(f"Tempo médio de retenção para usuários com retenção positiva: {media_retencao:.2f} dias")
-            st.write(f"Mediana do tempo de retenção para usuários com retenção positiva: {mediana_retencao} dias")
-
             # Visualização da distribuição de retenção
             fig_ret, ax_ret = plt.subplots(figsize=(10, 6))
             sns.histplot(retencao["Retencao_Dias"], bins=20, kde=True, ax=ax_ret, color='purple')
@@ -251,6 +245,12 @@ else:
             ax_ret.set_ylabel("Número de Usuários")
             st.pyplot(fig_ret)
             plt.close(fig_ret)
+
+            # Estatísticas básicas de retenção
+            media_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].mean()
+            mediana_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].median()
+            st.write(f"Tempo médio de retenção para usuários com retenção positiva: {media_retencao:.2f} dias")
+            st.write(f"Mediana do tempo de retenção para usuários com retenção positiva: {mediana_retencao} dias")
 
 
             # 1. Frequência e Volume de Ações
