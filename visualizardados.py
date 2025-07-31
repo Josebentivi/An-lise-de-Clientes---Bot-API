@@ -246,6 +246,15 @@ else:
             st.pyplot(fig_ret)
             plt.close(fig_ret)
 
+            # Visualização da distribuição de retenção
+            fig_ret, ax_ret = plt.subplots(figsize=(10, 6))
+            sns.histplot(retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"], bins=20, kde=True, ax=ax_ret, color='purple')
+            ax_ret.set_title("Distribuição do Tempo de Retenção dos Usuários positivos")
+            ax_ret.set_xlabel("Tempo de retenção (dias)")
+            ax_ret.set_ylabel("Número de Usuários")
+            st.pyplot(fig_ret)
+            plt.close(fig_ret)
+
             # Estatísticas básicas de retenção
             media_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].mean()
             mediana_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].median()
