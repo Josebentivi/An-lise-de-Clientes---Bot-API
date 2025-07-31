@@ -161,32 +161,7 @@ else:
     #    mediana2 = df["Créditos Função 2"].median()
     #    st.write(f"Média: {media2:.2f}, Mediana: {mediana2}")
 
-    st.subheader("Análise de Retenção de Usuários")
-
     
-    # Calcula a diferença entre o primeiro e o último acesso para cada usuário
-    df["Data"] = pd.to_datetime(df["Data"], format="%Y-%m-%d %H:%M:%S", errors="coerce")
-    # Cálculo da retenção: tempo entre o primeiro e o último acesso para cada usuário
-    retencao = df.groupby("Usuario")["Data"].agg(["min", "max"]).reset_index()
-    retencao["Retencao_Dias"] = (retencao["max"] - retencao["min"]).dt.days
-    st.write("Análise de Retenção de Usuários (em dias)")
-    st.dataframe(retencao)
-
-    # Estatísticas básicas de retenção
-    media_retencao = retencao["Retencao_Dias"].mean()
-    mediana_retencao = retencao["Retencao_Dias"].median()
-    st.write(f"Tempo médio de retenção: {media_retencao:.1f} dias")
-    st.write(f"Mediana do tempo de retenção: {mediana_retencao} dias")
-
-    # Visualização da distribuição de retenção
-    fig_ret, ax_ret = plt.subplots(figsize=(10, 6))
-    sns.histplot(retencao["Retencao_Dias"], bins=20, kde=True, ax=ax_ret, color='purple')
-    ax_ret.set_title("Distribuição do Tempo de Retenção dos Usuários")
-    ax_ret.set_xlabel("Tempo de retenção (dias)")
-    ax_ret.set_ylabel("Número de Usuários")
-    st.pyplot(fig_ret)
-    plt.close(fig_ret)
-
     #st.markdown("### Relatório Resumido")
     #st.write("O relatório evidencia o crescimento de usuários, a distribuição dos créditos disponíveis e a taxa de retenção dos clientes.")
 
@@ -251,6 +226,32 @@ else:
             # Exibição dos dados carregados
             st.subheader("Visualização das Ultimas Interações")
             st.dataframe(df.tail(50))
+
+            st.subheader("Análise de Retenção de Usuários")    
+            # Calcula a diferença entre o primeiro e o último acesso para cada usuário
+            #df["Data"] = pd.to_datetime(df["Data"], format="%Y-%m-%d %H:%M:%S", errors="coerce")
+            
+            # Cálculo da retenção: tempo entre o primeiro e o último acesso para cada usuário
+            retencao = df.groupby("Usuario")["Data"].agg(["min", "max"]).reset_index()
+            retencao["Retencao_Dias"] = (retencao["max"] - retencao["min"]).dt.days
+            st.write("Análise de Retenção de Usuários (em dias)")
+            st.dataframe(retencao)
+
+            # Estatísticas básicas de retenção
+            media_retencao = retencao["Retencao_Dias"].mean()
+            mediana_retencao = retencao["Retencao_Dias"].median()
+            st.write(f"Tempo médio de retenção: {media_retencao:.1f} dias")
+            st.write(f"Mediana do tempo de retenção: {mediana_retencao} dias")
+
+            # Visualização da distribuição de retenção
+            fig_ret, ax_ret = plt.subplots(figsize=(10, 6))
+            sns.histplot(retencao["Retencao_Dias"], bins=20, kde=True, ax=ax_ret, color='purple')
+            ax_ret.set_title("Distribuição do Tempo de Retenção dos Usuários")
+            ax_ret.set_xlabel("Tempo de retenção (dias)")
+            ax_ret.set_ylabel("Número de Usuários")
+            st.pyplot(fig_ret)
+            plt.close(fig_ret)
+
 
             # 1. Frequência e Volume de Ações
             st.subheader("Contagem de Ações do Servidor")
