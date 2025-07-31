@@ -163,7 +163,7 @@ else:
 
     st.subheader("Análise de Retenção de Usuários")
     # Calcula a diferença entre o primeiro e o último acesso para cada usuário
-    
+    df["Data"] = pd.to_datetime(df["Data"], format="%Y-%m-%d %H:%M:%S", errors="coerce")
     # Cálculo da retenção: tempo entre o primeiro e o último acesso para cada usuário
     retencao = df.groupby("Usuario")["Data"].agg(["min", "max"]).reset_index()
     retencao["Retencao_Dias"] = (retencao["max"] - retencao["min"]).dt.days
