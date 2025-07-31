@@ -264,7 +264,7 @@ else:
             st.write(f"Mediana do tempo de retenção para usuários com retenção positiva: {mediana_retencao} dias")
             st.write(f"Número de usuários com retenção zero (Utilizaram apenas um dia): {mediana_retencao_zero}")
             st.write(f"Número total de usuários analisados: {mediana_retencao_total}")
-            st.write(f"Taxa de retenção: {mediana_retencao_zero / mediana_retencao_total:.2%}")
+            st.write(f"Taxa de retenção: {(1-mediana_retencao_zero / mediana_retencao_total):.2%}")
 
 
             # 1. Frequência e Volume de Ações
