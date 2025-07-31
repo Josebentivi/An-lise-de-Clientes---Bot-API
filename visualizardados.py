@@ -135,6 +135,25 @@ else:
     plt.xticks(rotation=45)
     st.pyplot(fig1)
 
+    # Crescimento Diário de Novos Usuários (Últimos 30 Dias)
+    st.subheader("Crescimento Diário de Novos Usuários (Últimos 30 Dias)")
+    hoje = pd.Timestamp.today()
+    data_inicio = hoje - pd.Timedelta(days=30)
+    # Considera o primeiro registro de cada usuário para identificar quando se cadastraram
+    df_first = df.sort_values("Data").drop_duplicates(subset="Usuario", keep="first")
+    # Filtra os novos usuários registrados nos últimos 30 dias
+    novos_30dias = df_first[df_first["Data"] >= data_inicio].copy()
+    novos_30dias["Data_Somente"] = novos_30dias["Data"].dt.date
+    # Agrupa por dia e conta os novos usuários
+    crescimento_diario = novos_30dias.groupby("Data_Somente").size().reset_index(name="Novos Usuários")
+    fig_daily, ax_daily = plt.subplots(figsize=(10, 6))
+    ax_daily.plot(crescimento_diario["Data_Somente"], crescimento_diario["Novos Usuários"], marker="o", linestyle="-")
+    ax_daily.set_xlabel("Data")
+    ax_daily.set_ylabel("Novos Usuários")
+    ax_daily.set_title("Crescimento Diário de Novos Usuários (Últimos 30 Dias)")
+    plt.xticks(rotation=45)
+    st.pyplot(fig_daily)
+
     #st.subheader("2. Análise de Disponibilidade de Créditos")
     #col1, col2 = st.columns(2)
     #with col1:
