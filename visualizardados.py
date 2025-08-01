@@ -159,7 +159,7 @@ else:
     with col1:
         st.write("Créditos Função 1")
         fig2, ax2 = plt.subplots()
-        ax2.hist(df["Créditos Função 1"], bins=20, color="skyblue", edgecolor="black")
+        ax2.hist(df["Créditos Função 1"], bins=40, color="skyblue", edgecolor="black")
         ax2.set_xlabel("Créditos")
         ax2.set_ylabel("Frequência")
         ax2.set_title("Distribuição dos Créditos Função 1")
@@ -171,7 +171,7 @@ else:
     with col2:
         st.write("Créditos Função 2")
         fig3, ax3 = plt.subplots()
-        ax3.hist(df["Créditos Função 2"], bins=20, color="salmon", edgecolor="black")
+        ax3.hist(df["Créditos Função 2"], bins=40, color="salmon", edgecolor="black")
         ax3.set_xlabel("Créditos")
         ax3.set_ylabel("Frequência")
         ax3.set_title("Distribuição dos Créditos Função 2")
