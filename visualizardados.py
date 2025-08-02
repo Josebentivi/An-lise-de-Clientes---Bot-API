@@ -164,8 +164,8 @@ else:
         ax2.set_ylabel("Frequência")
         ax2.set_title("Distribuição dos Créditos Chat")
         st.pyplot(fig2)
-        media1 = df["Créditos Chat"].mean()
-        mediana1 = df["Créditos Chat"].median()
+        media1 = df["Créditos Função 1"].mean()
+        mediana1 = df["Créditos Função 1"].median()
         st.write(f"Média: {media1:.2f}, Mediana: {mediana1}")
 
     with col2:
@@ -176,8 +176,8 @@ else:
         ax3.set_ylabel("Frequência")
         ax3.set_title("Distribuição dos Créditos Consulta")
         st.pyplot(fig3)
-        media2 = df["Créditos Consulta"].mean()
-        mediana2 = df["Créditos Consulta"].median()
+        media2 = df["Créditos Função 2"].mean()
+        mediana2 = df["Créditos Função 2"].median()
         st.write(f"Média: {media2:.2f}, Mediana: {mediana2}")
 
     
