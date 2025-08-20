@@ -12,8 +12,8 @@ import threading
 plt.style.use('seaborn-v0_8-pastel')
 #plt.style.use('dark_background') 
 
-
-ads=214
+#atualizado em 18/08/2025
+ads=332
 
 def Carregando():
     porcentagem = 0
