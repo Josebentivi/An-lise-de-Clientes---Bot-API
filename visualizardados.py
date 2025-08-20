@@ -13,7 +13,7 @@ plt.style.use('seaborn-v0_8-pastel')
 #plt.style.use('dark_background') 
 
 #atualizado em 18/08/2025
-ads=332
+ads=332 
 
 def Carregando():
     porcentagem = 0
@@ -40,7 +40,7 @@ warnings.filterwarnings("ignore", message="missing ScriptRunContext")
 st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wide")
 #Carregando()
 #chave_secreta = st.text_input("Senha de acesso", type="password")
-chave_secreta="JurisAI"
+chave_secreta = st.secrets["CHAVE"]
 if not chave_secreta and False:
     st.info("Por favor, adicione a sua senha de acesso.", icon="🗝️")
 else:    
