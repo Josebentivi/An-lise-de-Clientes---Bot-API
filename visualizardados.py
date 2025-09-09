@@ -244,7 +244,7 @@ else:
 
             # Exibição dos dados carregados
             st.subheader("Visualização das Ultimas Interações")
-            st.dataframe(df.tail(50))
+            st.dataframe(df.tail(100))
 
             st.subheader("Análise de Retenção de Usuários")    
             # Calcula a diferença entre o primeiro e o último acesso para cada usuário
