@@ -8,6 +8,7 @@ from analytics import (
     failure_by_feature,
     growth_from_events,
     transition_summary,
+    uncategorized_events,
 )
 
 
@@ -59,6 +60,14 @@ class AnalyticsTestCase(unittest.TestCase):
         views = credit_views(self.user_df, self.event_df)
         self.assertEqual(len(views["latest"]), 2)
         self.assertFalse(views["por_segmento"].empty)
+
+    def test_uncategorized_events_lists_exact_unmapped_actions(self) -> None:
+        events_raw = self.events_raw + [[104, "Login realizado", "2026/02/04 08:00:00"]]
+        event_df = build_event_frame(events_raw)
+        outros = uncategorized_events(event_df)
+        self.assertEqual(len(outros), 1)
+        self.assertEqual(outros.iloc[0]["AcaoOriginal"], "Login realizado")
+        self.assertEqual(int(outros.iloc[0]["Eventos"]), 1)
 
 
 if __name__ == "__main__":

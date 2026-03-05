@@ -23,6 +23,7 @@ from analytics import (
     retention_distribution,
     session_metrics,
     transition_summary,
+    uncategorized_events,
 )
 from presentation_export import build_presentation_bytes
 
@@ -398,6 +399,14 @@ def _render_quality(
             user_registry_df.sort_values("Data", ascending=False).head(100),
             use_container_width=True,
         )
+
+    st.subheader("Eventos classificados como Outros")
+    outros = uncategorized_events(event_df)
+    if outros.empty:
+        st.info("Nenhum evento do recorte atual caiu na categoria 'Outros'.")
+    else:
+        st.caption("Tabela com os nomes exatos dos eventos que ainda nao possuem mapeamento para uma feature.")
+        st.dataframe(outros, use_container_width=True)
 
 
 def main() -> None:

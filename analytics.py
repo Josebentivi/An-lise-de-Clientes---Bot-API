@@ -368,6 +368,30 @@ def failure_by_feature(event_df: pd.DataFrame) -> pd.DataFrame:
     return summary.sort_values(["TaxaFalha", "Tentativas"], ascending=[False, False]).reset_index(drop=True)
 
 
+def uncategorized_events(event_df: pd.DataFrame) -> pd.DataFrame:
+    columns = ["AcaoOriginal", "Eventos", "Usuarios", "PrimeiroRegistro", "UltimoRegistro"]
+    if event_df.empty:
+        return pd.DataFrame(columns=columns)
+
+    unknown = event_df[event_df["Feature"] == "Outros"].copy()
+    if unknown.empty:
+        return pd.DataFrame(columns=columns)
+
+    summary = (
+        unknown.groupby("AcaoOriginal")
+        .agg(
+            Eventos=("Usuario", "size"),
+            Usuarios=("Usuario", "nunique"),
+            PrimeiroRegistro=("Data", "min"),
+            UltimoRegistro=("Data", "max"),
+        )
+        .reset_index()
+        .sort_values(["Eventos", "Usuarios", "AcaoOriginal"], ascending=[False, False, True])
+        .reset_index(drop=True)
+    )
+    return summary
+
+
 def engagement_funnel(event_df: pd.DataFrame) -> pd.DataFrame:
     stats = build_user_stats(event_df)
     if stats.empty:
