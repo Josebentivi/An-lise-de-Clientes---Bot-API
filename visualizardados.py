@@ -1,46 +1,39 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import warnings
-import requests
-import matplotlib.pyplot as plt
-from time import sleep
+from __future__ import annotations
+
 import os
-import threading
-#estilos = [ 'dark_background', 'fast', 'fivethirtyeight','Solarize_Light2', '_classic_test_patch', '_mpl-gallery', '_mpl-gallery-nogrid', 'bmh', 'classic', 'ggplot', 'grayscale', 'seaborn-v0_8', 'seaborn-v0_8-bright', 'seaborn-v0_8-colorblind', 'seaborn-v0_8-dark', 'seaborn-v0_8-dark-palette', 'seaborn-v0_8-darkgrid', 'seaborn-v0_8-deep', 'seaborn-v0_8-muted', 'seaborn-v0_8-notebook', 'seaborn-v0_8-paper', 'seaborn-v0_8-pastel', 'seaborn-v0_8-poster', 'seaborn-v0_8-talk', 'seaborn-v0_8-ticks', 'seaborn-v0_8-white', 'seaborn-v0_8-whitegrid', 'tableau-colorblind10']
-plt.style.use('seaborn-v0_8-pastel')
-#plt.style.use('dark_background') 
 
-#atualizado em 18/08/2025
-ads=332 
+import matplotlib.pyplot as plt
+import pandas as pd
+import requests
+import seaborn as sns
+import streamlit as st
 
-def Carregando():
-    porcentagem = 0
-    cols = st.columns(3)
-    with cols[1]:
-        my_bar = st.progress(porcentagem, text="Aprimorando plataforma...")
-        tempo=1
-        sleep(1)
-        CarregandoInicio = ["Carregando leis e jurisprudência...","Carregando doutrinas...","Finalizando melhoria...","Pronto!"]
-        for texto in CarregandoInicio:
-            porcentagem += 25
-            my_bar.progress(porcentagem, text=texto)
-            tempo+=0.25
-            sleep(tempo)
-        my_bar.empty()
+from analytics import (
+    build_event_frame,
+    build_user_registry,
+    build_user_stats,
+    cohort_retention_matrix,
+    credit_views,
+    engagement_funnel,
+    failure_by_feature,
+    feature_adoption,
+    growth_from_events,
+    profile_event_quality,
+    profile_user_quality,
+    retention_distribution,
+    session_metrics,
+    transition_summary,
+)
 
-#x = threading.Thread(target=alarme, args=())
-#x.start()
-
-# Suppress Streamlit's ScriptRunContext warning
-warnings.filterwarnings("ignore", message="missing ScriptRunContext")
 
 API_URL = os.getenv("JURISAI_API_URL", "http://52.2.202.37/streamlit/")
 REQUEST_TIMEOUT_SECONDS = int(os.getenv("JURISAI_TIMEOUT_SECONDS", "30"))
 
+plt.style.use("seaborn-v0_8-pastel")
+sns.set_theme(style="whitegrid")
 
-def obter_chave_secreta():
+
+def obter_chave_secreta() -> str:
     try:
         chave = st.secrets.get("CHAVE", "")
     except Exception:
@@ -49,7 +42,7 @@ def obter_chave_secreta():
 
 
 @st.cache_data(ttl=600, show_spinner=False)
-def carregar_saida(produto, chave):
+def carregar_saida(produto: str, chave: str) -> tuple[list[object], object]:
     response = requests.post(
         API_URL,
         json={"cliente": chave, "produto": produto},
@@ -63,360 +56,425 @@ def carregar_saida(produto, chave):
 
     return payload["saida"], payload.get("erro")
 
-# Configuração inicial da página
-st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wide")
-#Carregando()
-#chave_secreta = st.text_input("Senha de acesso", type="password")
-chave_secreta = obter_chave_secreta()
-if not chave_secreta:
-    st.error("A secret CHAVE nao esta configurada no Streamlit.")
-    st.caption("Configure CHAVE em Settings > Secrets ou defina a variavel de ambiente CHAVE.")
-    st.stop()
-else:
-    with st.spinner("Carregando dados dos clientes..."):
-        try:
-            saida, erro = carregar_saida("jurisaiusuarios", chave_secreta)
-        except requests.RequestException as exc:
-            st.error(f"Nao foi possivel acessar a API em {API_URL}.")
-            st.exception(exc)
-            st.stop()
-        except ValueError as exc:
-            st.error("A API retornou um formato inesperado para 'jurisaiusuarios'.")
-            st.exception(exc)
-            st.stop()
 
-    # Upload do arquivo CSV
-    #st.sidebar.header("Carregar arquivo CSV")
-    #uploaded_file = st.sidebar.file_uploader("Escolha um arquivo CSV", type="csv")
+@st.cache_data(ttl=600, show_spinner=False)
+def carregar_dados_brutos(chave: str) -> tuple[list[object], list[object]]:
+    usuarios_raw, _ = carregar_saida("jurisaiusuarios", chave)
+    eventos_raw, _ = carregar_saida("jurisai", chave)
+    return usuarios_raw, eventos_raw
 
-    #if uploaded_file is not None:
-    # Leitura dos dados
-    #df = pd.read_csv(uploaded_file)
-    df = pd.DataFrame(saida,columns=["Usuario","Data","Fonte","Obs","Créditos Função 1","Créditos Função 2"])
-    df = df[["Usuario","Data","Créditos Função 1","Créditos Função 2"]]
-    #df = df[~df["Data"].astype(str).str.contains("2025-04")]
 
-    # Vimero de clientes
-    total_clientes = df["Usuario"].nunique()
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown(
-            f"""
-            <div style="background-color: #0e1117; padding: 10px; border-radius: 5px; text-align: center;">
-                <p style="color: white; font-size: 18px; margin: 0;">Número de usuários</p>
-                <p style="color: white; font-size: 32px; font-weight: bold; margin: 0;">{total_clientes}</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    with col2:
-        st.markdown(
-            f"""
-            <div style="background-color: #0e1117; padding: 10px; border-radius: 5px; text-align: center;">
-                <p style="color: white; font-size: 18px; margin: 0;">Acesso Orgânico</p>
-                <p style="color: green; font-size: 32px; font-weight: bold; margin: 0;">{total_clientes-ads}</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    with col3:
-        st.markdown(
-            f"""
-            <div style="background-color: #0e1117; padding: 10px; border-radius: 5px; text-align: center;">
-                <p style="color: white; font-size: 18px; margin: 0;">Acesso Ads</p>
-                <p style="color: blue; font-size: 32px; font-weight: bold; margin: 0;">{ads}</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    
-    st.title("Análise de Log de Registro dos Clientes")
-    #df = pd.read_csv(uploaded_file)
-    df["Data"] = pd.to_datetime(df["Data"], format="%Y/%m/%d %H:%M:%S")
-    st.header("Visualização dos Dados")
-    st.write(df)
+@st.cache_data(ttl=600, show_spinner=False)
+def preparar_modelos(
+    usuarios_raw: list[object], eventos_raw: list[object]
+) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, int], dict[str, int]]:
+    user_registry = build_user_registry(usuarios_raw)
+    event_df = build_event_frame(eventos_raw)
+    return (
+        user_registry,
+        event_df,
+        profile_user_quality(usuarios_raw),
+        profile_event_quality(eventos_raw),
+    )
 
-    # Plot do total de usuários por mês (cumulativo)
-    df_first = df.sort_values("Data").drop_duplicates(subset="Usuario", keep="first")
-    df_first["AnoMes"] = df_first["Data"].dt.to_period("M").astype(str)
-    total_users_by_month = df_first.groupby("AnoMes").size().cumsum().reset_index(name="Total Usuários")
-    fig, ax = plt.subplots()
-    ax.plot(total_users_by_month["AnoMes"], total_users_by_month["Total Usuários"], marker="o", linestyle="-")
-    ax.set_xlabel("Ano/Mês")
-    ax.set_ylabel("Total de Usuários")
-    ax.set_title("Total de Usuários por Mês")
+
+def filtrar_eventos(
+    event_df: pd.DataFrame,
+    segmentos_base: pd.DataFrame,
+    start_date: pd.Timestamp,
+    end_date: pd.Timestamp,
+    features: list[str],
+    statuses: list[str],
+    segmentos: list[str],
+) -> pd.DataFrame:
+    allowed_users = segmentos_base[segmentos_base["Segmento"].isin(segmentos)]["Usuario"]
+    mask = (
+        event_df["Data"].between(start_date, end_date)
+        & event_df["Feature"].isin(features)
+        & event_df["Status"].isin(statuses)
+        & event_df["Usuario"].isin(allowed_users)
+    )
+    return event_df.loc[mask].copy()
+
+
+def _plot_month_series(data: pd.DataFrame, title: str, y_label: str) -> None:
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.plot(data["Periodo"], data["Usuarios"], marker="o")
+    ax.set_title(title)
+    ax.set_xlabel("Periodo")
+    ax.set_ylabel(y_label)
     plt.xticks(rotation=45)
     st.pyplot(fig)
+    plt.close(fig)
 
-    st.subheader("Crescimento de Usuários")
-    # Considera o primeiro registro de cada usuário
-    df_first = df.sort_values("Data").drop_duplicates(subset="Usuario", keep="first")
-    df_first["AnoMes"] = df_first["Data"].dt.to_period("M").astype(str)
-    crescimento = df_first.groupby("AnoMes").size().reset_index(name="Novos Usuários")
-    fig1, ax1 = plt.subplots()
-    ax1.plot(crescimento["AnoMes"], crescimento["Novos Usuários"], marker="o")
-    ax1.set_xlabel("Ano/Mês")
-    ax1.set_ylabel("Número de Usuários Novos")
-    ax1.set_title("Crescimento de Usuários ao longo do tempo")
-    plt.xticks(rotation=45)
-    st.pyplot(fig1)
 
-    # Crescimento Diário de Novos Usuários (Últimos 30 Dias)
-    st.subheader("Crescimento Diário de Novos Usuários (Últimos 30 Dias)")
-    hoje = pd.Timestamp.today()
-    data_inicio = hoje - pd.Timedelta(days=30)
-    # Considera o primeiro registro de cada usuário para identificar quando se cadastraram
-    df_first = df.sort_values("Data").drop_duplicates(subset="Usuario", keep="first")
-    # Filtra os novos usuários registrados nos últimos 30 dias
-    novos_30dias = df_first[df_first["Data"] >= data_inicio].copy()
-    novos_30dias["Data_Somente"] = novos_30dias["Data"].dt.date
-    # Agrupa por dia e conta os novos usuários
-    crescimento_diario = novos_30dias.groupby("Data_Somente").size().reset_index(name="Novos Usuários")
-    fig_daily, ax_daily = plt.subplots(figsize=(10, 6))
-    ax_daily.plot(crescimento_diario["Data_Somente"], crescimento_diario["Novos Usuários"], marker="o", linestyle="-")
-    ax_daily.set_xlabel("Data")
-    ax_daily.set_ylabel("Novos Usuários")
-    ax_daily.set_title("Crescimento Diário de Novos Usuários (Últimos 30 Dias)")
-    plt.xticks(rotation=45)
-    st.pyplot(fig_daily)
+def _plot_histogram(series: pd.Series, title: str, x_label: str, color: str) -> None:
+    fig, ax = plt.subplots(figsize=(8, 4))
+    sns.histplot(series.dropna(), bins=20, kde=True, ax=ax, color=color)
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel("Usuarios")
+    st.pyplot(fig)
+    plt.close(fig)
 
-    st.subheader("2. Análise de Disponibilidade de Créditos")
+
+def _plot_bar(data: pd.DataFrame, x: str, y: str, title: str, x_label: str, y_label: str) -> None:
+    fig, ax = plt.subplots(figsize=(9, 5))
+    sns.barplot(data=data, x=x, y=y, ax=ax)
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    st.pyplot(fig)
+    plt.close(fig)
+
+
+def _render_overview(event_df: pd.DataFrame, user_registry_df: pd.DataFrame) -> None:
+    user_stats = build_user_stats(event_df)
+    growth = growth_from_events(event_df)
+    credit_data = credit_views(user_registry_df, event_df)
+
+    active_users = event_df["Usuario"].nunique()
+    total_events = len(event_df)
+    total_sessions = event_df["SessaoId"].nunique()
+    actions_per_user = user_stats["TotalAcoes"].mean() if not user_stats.empty else 0.0
+    retention_7d = user_stats["Retido7D"].mean() if not user_stats.empty else 0.0
+
+    col1, col2, col3, col4, col5 = st.columns(5)
+    col1.metric("Usuarios ativos", f"{active_users:,}".replace(",", "."))
+    col2.metric("Eventos", f"{total_events:,}".replace(",", "."))
+    col3.metric("Sessoes", f"{total_sessions:,}".replace(",", "."))
+    col4.metric("Acoes por usuario", f"{actions_per_user:.1f}")
+    col5.metric("Retencao 7D", f"{retention_7d:.1%}")
+
+    st.caption("Todos os indicadores abaixo respeitam o recorte definido na barra lateral.")
+
+    growth_col1, growth_col2 = st.columns(2)
+    with growth_col1:
+        st.subheader("Novos usuarios por mes")
+        if growth["novos_mes"].empty:
+            st.info("Nao ha usuarios suficientes para montar a serie mensal.")
+        else:
+            _plot_month_series(growth["novos_mes"], "Novos usuarios por mes", "Usuarios")
+    with growth_col2:
+        st.subheader("Base acumulada por mes")
+        if growth["acumulado_mes"].empty:
+            st.info("Nao ha usuarios suficientes para montar a serie acumulada.")
+        else:
+            _plot_month_series(growth["acumulado_mes"], "Base acumulada por mes", "Usuarios")
+
+    daily_col, credit_col = st.columns(2)
+    with daily_col:
+        st.subheader("Novos usuarios nos ultimos 30 dias do recorte")
+        if growth["novos_dia"].empty:
+            st.info("Nao ha novos usuarios no periodo recente do recorte.")
+        else:
+            fig, ax = plt.subplots(figsize=(8, 4))
+            ax.plot(growth["novos_dia"]["Periodo"], growth["novos_dia"]["Usuarios"], marker="o")
+            ax.set_title("Novos usuarios por dia")
+            ax.set_xlabel("Data")
+            ax.set_ylabel("Usuarios")
+            plt.xticks(rotation=45)
+            st.pyplot(fig)
+            plt.close(fig)
+    with credit_col:
+        st.subheader("Saldo atual de creditos por usuario")
+        latest = credit_data["latest"]
+        if latest.empty:
+            st.info("Nao ha snapshots de credito para os usuarios filtrados.")
+        else:
+            fig, ax = plt.subplots(figsize=(8, 4))
+            sns.histplot(latest["Creditos_Consulta"].dropna(), bins=20, kde=True, ax=ax, color="salmon")
+            ax.set_title("Distribuicao de creditos de consulta")
+            ax.set_xlabel("Creditos")
+            ax.set_ylabel("Usuarios")
+            st.pyplot(fig)
+            plt.close(fig)
+
+    segment_col, cohort_col = st.columns(2)
+    with segment_col:
+        st.subheader("Creditos medios por segmento")
+        segment_table = credit_data["por_segmento"]
+        if segment_table.empty:
+            st.info("Nao ha dados de credito por segmento para o recorte atual.")
+        else:
+            st.dataframe(segment_table, use_container_width=True)
+    with cohort_col:
+        st.subheader("Creditos medios por cohort")
+        cohort_table = credit_data["por_cohort"]
+        if cohort_table.empty:
+            st.info("Nao ha dados de credito por cohort para o recorte atual.")
+        else:
+            st.dataframe(cohort_table, use_container_width=True)
+
+
+def _render_retention(event_df: pd.DataFrame) -> None:
+    user_stats = retention_distribution(event_df)
+    if user_stats.empty:
+        st.info("Nao ha dados suficientes para analise de retencao.")
+        return
+
     col1, col2 = st.columns(2)
     with col1:
-        st.write("Créditos Chat")
-        fig2, ax2 = plt.subplots()
-        ax2.hist(df["Créditos Função 1"], bins=50, color="skyblue", edgecolor="black")
-        ax2.set_xlabel("Créditos")
-        ax2.set_ylabel("Frequência")
-        ax2.set_title("Distribuição dos Créditos Chat")
-        st.pyplot(fig2)
-        media1 = df["Créditos Função 1"].mean()
-        mediana1 = df["Créditos Função 1"].median()
-        st.write(f"Média: {media1:.2f}, Mediana: {mediana1}")
-
+        st.subheader("Distribuicao da retencao")
+        _plot_histogram(user_stats["RetencaoDias"], "Retencao em dias", "Dias", "steelblue")
     with col2:
-        st.write("Créditos Consulta")
-        fig3, ax3 = plt.subplots()
-        ax3.hist(df["Créditos Função 2"], bins=50, color="salmon", edgecolor="black")
-        ax3.set_xlabel("Créditos")
-        ax3.set_ylabel("Frequência")
-        ax3.set_title("Distribuição dos Créditos Consulta")
-        st.pyplot(fig3)
-        media2 = df["Créditos Função 2"].mean()
-        mediana2 = df["Créditos Função 2"].median()
-        st.write(f"Média: {media2:.2f}, Mediana: {mediana2}")
+        st.subheader("Usuarios com retencao positiva")
+        positivos = user_stats.loc[user_stats["RetencaoDias"] > 0, "RetencaoDias"]
+        if positivos.empty:
+            st.info("Nenhum usuario retornou em outro dia no recorte atual.")
+        else:
+            _plot_histogram(positivos, "Retencao positiva", "Dias", "seagreen")
 
-    
-    #st.markdown("### Relatório Resumido")
-    #st.write("O relatório evidencia o crescimento de usuários, a distribuição dos créditos disponíveis e a taxa de retenção dos clientes.")
+    st.subheader("Tabela de retencao por usuario")
+    st.dataframe(user_stats, use_container_width=True)
+
+    st.subheader("Retencao por cohort mensal")
+    cohort_matrix = cohort_retention_matrix(event_df)
+    if cohort_matrix.empty:
+        st.info("Nao ha dados suficientes para cohorts.")
+    else:
+        fig, ax = plt.subplots(figsize=(10, 5))
+        sns.heatmap(cohort_matrix.mul(100), annot=True, fmt=".1f", cmap="YlGnBu", ax=ax)
+        ax.set_title("Retencao percentual por cohort (%)")
+        ax.set_xlabel("Mes desde o primeiro uso")
+        ax.set_ylabel("Cohort")
+        st.pyplot(fig)
+        plt.close(fig)
+
+    st.subheader("Segmentacao de usuarios no recorte")
+    segment_counts = user_stats["Segmento"].value_counts().reset_index()
+    segment_counts.columns = ["Segmento", "Usuarios"]
+    _plot_bar(segment_counts, "Usuarios", "Segmento", "Usuarios por segmento", "Usuarios", "Segmento")
 
 
+def _render_features(event_df: pd.DataFrame) -> None:
+    adoption = feature_adoption(event_df)
+    failures = failure_by_feature(event_df)
+
+    st.subheader("Adocao por feature")
+    if adoption.empty:
+        st.info("Nao ha uso de feature no recorte atual.")
+    else:
+        chart = adoption.sort_values("UsuariosAtivos", ascending=False)
+        st.dataframe(chart, use_container_width=True)
+        _plot_bar(chart, "UsuariosAtivos", "Feature", "Usuarios ativos por feature", "Usuarios", "Feature")
+
+    st.subheader("Falhas por feature")
+    if failures.empty:
+        st.info("Nao ha eventos com status de sucesso ou falha no recorte atual.")
+    else:
+        st.dataframe(failures, use_container_width=True)
+        failure_chart = failures.copy()
+        failure_chart["TaxaFalhaPct"] = failure_chart["TaxaFalha"] * 100
+        _plot_bar(failure_chart, "TaxaFalhaPct", "Feature", "Taxa de falha por feature", "Taxa de falha (%)", "Feature")
+
+    st.subheader("Heatmap de atividade")
+    if event_df.empty:
+        st.info("Sem eventos para heatmap.")
+        return
+
+    heatmap = event_df.pivot_table(
+        index="DiaSemana",
+        columns="Hora",
+        values="AcaoOriginal",
+        aggfunc="count",
+        fill_value=0,
+    )
+    ordered_days = ["Segunda", "Terca", "Quarta", "Quinta", "Sexta", "Sabado", "Domingo"]
+    heatmap = heatmap.reindex(ordered_days)
+    fig, ax = plt.subplots(figsize=(12, 5))
+    sns.heatmap(heatmap, cmap="YlGnBu", ax=ax)
+    ax.set_title("Eventos por hora e dia da semana")
+    ax.set_xlabel("Hora")
+    ax.set_ylabel("Dia da semana")
+    st.pyplot(fig)
+    plt.close(fig)
 
 
+def _render_journey(event_df: pd.DataFrame) -> None:
+    funnel = engagement_funnel(event_df)
+    sessions = session_metrics(event_df)
+    transitions = transition_summary(event_df)
 
-    st.title("Dashboard de Visualização do comportamento de clientes - JurisAI")
+    st.subheader("Funil de engajamento")
+    if funnel.empty:
+        st.info("Nao ha usuarios suficientes para montar o funil.")
+    else:
+        st.dataframe(funnel, use_container_width=True)
+        _plot_bar(funnel, "Usuarios", "Etapa", "Usuarios por etapa do funil", "Usuarios", "Etapa")
 
-    with st.spinner("Carregando dados de uso da plataforma..."):
+    st.subheader("Metricas de sessao")
+    if sessions.empty:
+        st.info("Nao ha sessoes suficientes para analise.")
+    else:
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Acoes medianas por sessao", f"{sessions['Acoes'].median():.1f}")
+        col2.metric("Duracao media da sessao", f"{sessions['DuracaoMinutos'].mean():.1f} min")
+        col3.metric("Features por sessao", f"{sessions['Features'].mean():.1f}")
+        st.dataframe(sessions.head(50), use_container_width=True)
+
+    st.subheader("Transicoes entre features")
+    if transitions.empty:
+        st.info("Nao ha transicoes entre features no recorte atual.")
+    else:
+        st.dataframe(transitions, use_container_width=True)
+        origem = st.selectbox(
+            "Filtrar transicoes por origem",
+            options=["Todas"] + sorted(transitions["FeatureOrigem"].unique().tolist()),
+        )
+        filtered_transitions = transitions if origem == "Todas" else transitions[transitions["FeatureOrigem"] == origem]
+        if filtered_transitions.empty:
+            st.info("Nenhuma transicao para a feature selecionada.")
+        else:
+            _plot_bar(
+                filtered_transitions,
+                "Transicoes",
+                "FeatureDestino",
+                "Top proximas features",
+                "Transicoes",
+                "Destino",
+            )
+
+    st.subheader("Tempo entre acoes por usuario")
+    selected_user = st.text_input("Digite um ID de usuario para inspecionar a jornada")
+    if selected_user:
         try:
-            saida, erro = carregar_saida("jurisai", chave_secreta)
+            user_id = int(selected_user)
+        except ValueError:
+            st.error("Informe um ID numerico.")
+            return
+        df_user = event_df[event_df["Usuario"] == user_id].sort_values("Data").copy()
+        if len(df_user) < 2:
+            st.info("O usuario possui poucas acoes para analise.")
+            return
+        df_user["TempoEntreSegundos"] = df_user["Data"].diff().dt.total_seconds()
+        st.dataframe(
+            df_user[["Data", "Feature", "AcaoOriginal", "SessaoId", "TempoEntreSegundos"]],
+            use_container_width=True,
+        )
+        st.metric("Tempo medio entre acoes", f"{df_user['TempoEntreSegundos'].mean():.1f} s")
+
+
+def _render_quality(
+    event_df: pd.DataFrame,
+    user_registry_df: pd.DataFrame,
+    user_quality: dict[str, int],
+    event_quality: dict[str, int],
+) -> None:
+    st.subheader("Saude do dataset")
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Eventos brutos", f"{event_quality['linhas_brutas']:,}".replace(",", "."))
+    col2.metric("Datas invalidas", f"{event_quality['datas_invalidas']:,}".replace(",", "."))
+    col3.metric("Duplicatas de eventos", f"{event_quality['linhas_duplicadas']:,}".replace(",", "."))
+    col4.metric("Acoes vazias", f"{event_quality['acoes_vazias']:,}".replace(",", "."))
+
+    col5, col6, col7, col8 = st.columns(4)
+    col5.metric("Snapshots de usuarios", f"{user_quality['linhas_brutas']:,}".replace(",", "."))
+    col6.metric("Datas invalidas usuarios", f"{user_quality['datas_invalidas']:,}".replace(",", "."))
+    col7.metric("Duplicatas usuarios", f"{user_quality['linhas_duplicadas']:,}".replace(",", "."))
+    col8.metric("Usuarios vazios", f"{user_quality['usuarios_vazios']:,}".replace(",", "."))
+
+    table_col1, table_col2 = st.columns(2)
+    with table_col1:
+        st.subheader("Ultimas interacoes")
+        st.dataframe(
+            event_df.sort_values("Data", ascending=False).head(100),
+            use_container_width=True,
+        )
+    with table_col2:
+        st.subheader("Ultimos snapshots de usuarios")
+        st.dataframe(
+            user_registry_df.sort_values("Data", ascending=False).head(100),
+            use_container_width=True,
+        )
+
+
+def main() -> None:
+    st.set_page_config(page_title="JurisAI - Analise de Clientes", layout="wide")
+    st.title("JurisAI - Analise de Clientes")
+    st.caption("Dashboard com cohorts, segmentacao, funil e qualidade de eventos.")
+
+    chave = obter_chave_secreta()
+    if not chave:
+        st.error("A secret CHAVE nao esta configurada no Streamlit.")
+        st.caption("Defina CHAVE em Settings > Secrets ou como variavel de ambiente.")
+        st.stop()
+
+    with st.spinner("Carregando eventos e snapshots de usuarios..."):
+        try:
+            usuarios_raw, eventos_raw = carregar_dados_brutos(chave)
+            user_registry_df, event_df, user_quality, event_quality = preparar_modelos(usuarios_raw, eventos_raw)
         except requests.RequestException as exc:
             st.error(f"Nao foi possivel acessar a API em {API_URL}.")
             st.exception(exc)
             st.stop()
         except ValueError as exc:
-            st.error("A API retornou um formato inesperado para 'jurisai'.")
+            st.error("A API retornou um formato inesperado.")
             st.exception(exc)
             st.stop()
 
-    # Upload do arquivo CSV
-    #st.sidebar.header("Carregar arquivo CSV")
-    #uploaded_file = st.sidebar.file_uploader("Escolha um arquivo CSV", type="csv")
+    if event_df.empty:
+        st.warning("A API nao retornou eventos validos para o dashboard.")
+        st.stop()
 
-    #if uploaded_file is not None:
-    if True:
-        # Leitura dos dados
-        #df = pd.read_csv(uploaded_file)
-        df = pd.DataFrame(saida,columns=["Usuario","Acao","Data"])
+    base_user_stats = build_user_stats(event_df)
 
-        # Verificação dos campos esperados
-        expected_columns = {'Usuario', 'Acao', 'Data'}
-        if not expected_columns.issubset(df.columns):
-            st.error("O arquivo CSV deve conter as colunas: Usuario, Acao, Data")
-        else:
-            # Conversão da coluna Data para datetime
-            df['Data'] = pd.to_datetime(df['Data'], format="%Y/%m/%d %H:%M:%S", errors="coerce")
-            df.dropna(subset=['Data'], inplace=True)
+    st.sidebar.header("Filtros globais")
+    min_date = event_df["Data"].min().date()
+    max_date = event_df["Data"].max().date()
+    date_range = st.sidebar.date_input(
+        "Periodo de eventos",
+        value=(min_date, max_date),
+        min_value=min_date,
+        max_value=max_date,
+    )
+    if len(date_range) != 2:
+        st.sidebar.warning("Selecione uma data inicial e final.")
+        st.stop()
+    start_date = pd.Timestamp(date_range[0]).normalize()
+    end_date = pd.Timestamp(date_range[1]).normalize() + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
 
-            # Enriquecimento dos dados com extração de variáveis temporais
-            df['Ano'] = df['Data'].dt.year
-            df['Mes'] = df['Data'].dt.month
-            df['Dia'] = df['Data'].dt.day
-            df['Hora'] = df['Data'].dt.hour
-            df['Dia_da_Semana'] = df['Data'].dt.day_name()
+    feature_options = sorted(event_df["Feature"].dropna().unique().tolist())
+    status_options = sorted(event_df["Status"].dropna().unique().tolist())
+    segment_options = sorted(base_user_stats["Segmento"].dropna().unique().tolist())
 
-            # Remoção de duplicidades
-            df.drop_duplicates(inplace=True)
+    selected_features = st.sidebar.multiselect("Features", options=feature_options, default=feature_options)
+    selected_statuses = st.sidebar.multiselect("Status", options=status_options, default=status_options)
+    selected_segments = st.sidebar.multiselect("Segmentos", options=segment_options, default=segment_options)
 
-            # Agrupamento de ações relacionadas
-            def agrupar_acoes(acao):
-                if acao in ["Consulta JurisBrasil falhou", "Consulta JurisBrasil Concluida", "Consulta JurisBrasil utilizada"]:
-                    return "Consulta JurisBrasil"
-                return acao
+    filtered_events = filtrar_eventos(
+        event_df,
+        base_user_stats,
+        start_date,
+        end_date,
+        selected_features or feature_options,
+        selected_statuses or status_options,
+        selected_segments or segment_options,
+    )
+    filtered_users = user_registry_df[user_registry_df["Usuario"].isin(filtered_events["Usuario"].unique())].copy()
 
-            df['Acao_Agrupada'] = df['Acao'].apply(agrupar_acoes)
+    st.sidebar.metric("Usuarios no recorte", filtered_events["Usuario"].nunique())
+    st.sidebar.metric("Eventos no recorte", len(filtered_events))
 
-            # Exibição dos dados carregados
-            st.subheader("Visualização das Ultimas Interações")
-            st.dataframe(df.tail(100))
+    if filtered_events.empty:
+        st.warning("Os filtros atuais nao retornaram eventos. Ajuste o recorte na barra lateral.")
+        st.stop()
 
-            st.subheader("Análise de Retenção de Usuários")    
-            # Calcula a diferença entre o primeiro e o último acesso para cada usuário
-            #df["Data"] = pd.to_datetime(df["Data"], format="%Y-%m-%d %H:%M:%S", errors="coerce")
-            
-            # Cálculo da retenção: tempo entre o primeiro e o último acesso para cada usuário
-            retencao = df.groupby("Usuario")["Data"].agg(["min", "max"]).reset_index()
-            retencao["Retencao_Dias"] = (retencao["max"] - retencao["min"]).dt.days
-            mediana_retencao_total = retencao["Retencao_Dias"].count()
-            st.write(f"Número total de usuários analisados: {mediana_retencao_total}")
-            st.write("Análise de Retenção de Usuários (em dias)")
-            st.dataframe(retencao.sort_values("Retencao_Dias", ascending=False))
+    overview_tab, retention_tab, feature_tab, journey_tab, quality_tab = st.tabs(
+        ["Visao geral", "Retencao", "Features", "Jornada", "Qualidade"]
+    )
 
-            # Visualização da distribuição de retenção
-            fig_ret, ax_ret = plt.subplots(figsize=(10, 6))
-            sns.histplot(retencao["Retencao_Dias"], bins=20, kde=True, ax=ax_ret, color='purple')
-            ax_ret.set_title("Distribuição do Tempo de Retenção dos Usuários")
-            ax_ret.set_xlabel("Tempo de retenção (dias)")
-            ax_ret.set_ylabel("Número de Usuários")
-            st.pyplot(fig_ret)
-            plt.close(fig_ret)
-
-            # Visualização da distribuição de retenção
-            fig_ret, ax_ret = plt.subplots(figsize=(10, 6))
-            sns.histplot(retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"], bins=20, kde=True, ax=ax_ret, color='purple')
-            ax_ret.set_title("Distribuição do Tempo de Retenção dos Usuários com Retenção Positiva")
-            ax_ret.set_xlabel("Tempo de retenção (dias)")
-            ax_ret.set_ylabel("Número de Usuários")
-            st.pyplot(fig_ret)
-            plt.close(fig_ret)
-
-            # Estatísticas básicas de retenção
-            media_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].mean()
-            mediana_retencao = retencao[retencao["Retencao_Dias"] > 0]["Retencao_Dias"].median()
-            mediana_retencao_zero = retencao[retencao["Retencao_Dias"] == 0]["Retencao_Dias"].count()
-            st.write(f"Tempo médio de retenção para usuários com retenção positiva: {media_retencao:.2f} dias")
-            st.write(f"Mediana do tempo de retenção para usuários com retenção positiva: {mediana_retencao} dias")
-            st.write(f"Número de usuários com retenção zero (Utilizaram apenas um dia): {mediana_retencao_zero}")
-            st.write(f"Taxa de retenção: {(1-mediana_retencao_zero / mediana_retencao_total):.2%}")
+    with overview_tab:
+        _render_overview(filtered_events, filtered_users)
+    with retention_tab:
+        _render_retention(filtered_events)
+    with feature_tab:
+        _render_features(filtered_events)
+    with journey_tab:
+        _render_journey(filtered_events)
+    with quality_tab:
+        _render_quality(filtered_events, filtered_users, user_quality, event_quality)
 
 
-            # 1. Frequência e Volume de Ações
-            st.subheader("Contagem de Ações do Servidor")
-            contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
-            contagem_acoes.columns = ['Acao', 'Contagem']
-            st.dataframe(contagem_acoes)
-
-            # Gráfico de barras para a frequência das ações do Servidor
-            fig1, ax1 = plt.subplots(figsize=(10, 6))
-            sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
-            ax1.set_title("Frequência de Ações")
-            ax1.set_xlabel("Interações")
-            ax1.set_ylabel("Tipo de Ação")
-            st.pyplot(fig1)
-            plt.close(fig1)  # Fecha a figura para liberar memória
-
-            # 1.5. Frequência e Volume de Ações do Usuário
-            st.subheader("Contagem de Ações do Usuário")
-            contagem_acoes = df['Acao_Agrupada'].value_counts().reset_index()
-            contagem_acoes.columns = ['Acao', 'Contagem']
-            #st.dataframe(contagem_acoes)
-
-            ordered_actions = ['Consulra PDF chat utilizado', 'Consulta Vade utilizada', 'Consulta Servidor utilizada', 'Consulta Doutrina utilizada', 'Consulta JurisBrasil utilizada', 'Consulta Leis utilizada', 'Criar documentação utilizada', 'Audio utilizado', 'Voz utilizada', 'Imagem carregada', 'PDF enviada', 'PDF enviado', 'Papo utilizado', 'Consulta removida', 'Consulta adicionada', 'Bateria removida', 'Bateria adicionada', 'Documentação utilizada', 'Vade utilizado', 'CGU utilizada', 'Doutrina utilizada', 'Leis utilizada', 'Consulta PDF utilizada', 'Bibliografia utilizada']
-            contagem_acoes = contagem_acoes.set_index("Acao").reindex(ordered_actions, fill_value=0).reset_index()
-            contagem_acoes = contagem_acoes[contagem_acoes['Contagem'] > 0]
-            contagem_acoes = contagem_acoes.sort_values("Contagem", ascending=False)
-
-            # Gráfico de barras para a frequência das ações
-            fig1, ax1 = plt.subplots(figsize=(10, 6))
-            sns.barplot(x='Contagem', y='Acao', data=contagem_acoes, ax=ax1)
-            ax1.set_title("Frequência de Ações")
-            ax1.set_xlabel("Interações")
-            ax1.set_ylabel("Tipo de Ação")
-            st.pyplot(fig1)
-            plt.close(fig1)  # Fecha a figura para liberar memória
-
-            # 2. Evolução Temporal das Ações (Diária)
-            st.subheader("Evolução Temporal das Ações")
-            df['Data_Somente'] = df['Data'].dt.date
-            acao_selecionada = st.selectbox("Selecione uma ação para analisar a evolução temporal", df['Acao_Agrupada'].unique())
-            df_acao = df[df['Acao_Agrupada'] == acao_selecionada]
-            serie_temporal = df_acao.groupby("Data_Somente").size()
-            st.line_chart(serie_temporal)
-
-            # 3. Análise de Sucesso vs Falhas para Consulta JurisBrasil
-            st.subheader("Sucesso vs. Falhas - Consulta JurisBrasil")
-            df_juris = df[df['Acao'].isin(["Consulta JurisBrasil Concluida", "Consulta JurisBrasil falhou"])]
-            if not df_juris.empty:
-                resumo_juris = df_juris['Acao'].value_counts().reset_index()
-                resumo_juris.columns = ['Acao', 'Contagem']
-                #st.dataframe(resumo_juris)
-                fig2, ax2 = plt.subplots(figsize=(6, 4))
-                sns.barplot(x='Acao', y='Contagem', data=resumo_juris, ax=ax2)
-                ax2.set_title("Consulta JurisBrasil: Concluída vs. Falhou")
-                st.pyplot(fig2)
-            else:
-                st.info("Não há dados suficientes para análise de 'Consulta JurisBrasil'.")
-
-            # 4. Análise de Comportamento do Usuário: Distribuição de Atividade
-            st.subheader("Distribuição de Atividade dos Usuários")
-            usuarios_atividade = df['Usuario'].value_counts().reset_index()
-            usuarios_atividade.columns = ['Usuario', 'Acoes']
-            st.dataframe(usuarios_atividade.head(20))
-            fig3, ax3 = plt.subplots(figsize=(10, 6))
-            sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
-            ax3.set_title("Distribuição do Número de Ações por Usuário")
-            ax3.set_xlabel("Interações")
-            ax3.set_ylabel("Usuários")
-            st.pyplot(fig3)
-
-            # 4.1. Análise de Comportamento do Usuário: Distribuição de Uso Ativo
-            st.subheader("Distribuição de Uso Ativo dos Usuários")
-            #st.dataframe(df[(df['Acao'] == 'Leis utilizada') | (df['Acao'] == 'Papo utilizado')])
-            usuarios_atividade = df[(df['Acao'] == 'Bateria removida') | (df['Acao'] == 'Consulta removida')]['Usuario'].value_counts().reset_index()
-            usuarios_atividade.columns = ['Usuario', 'Acoes']
-            st.dataframe(usuarios_atividade)
-            fig3, ax3 = plt.subplots(figsize=(10, 6))
-            sns.histplot(usuarios_atividade['Acoes'], bins=20, kde=True, ax=ax3)
-            ax3.set_title("Distribuição do Número de Ações de Uso Ativo por Usuário")
-            ax3.set_xlabel("Interações")
-            ax3.set_ylabel("Usuários")
-            st.pyplot(fig3)
-
-            # 5. Heatmap: Atividade por Hora e Dia da Semana
-            st.subheader("Heatmap de Atividade (Hora vs Dia da Semana)")
-            pivot_table = df.pivot_table(index='Dia_da_Semana', columns='Hora', values='Acao', aggfunc='count').fillna(0)
-            # Reordenar dias da semana
-            ordem_dias = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            pivot_table = pivot_table.reindex(ordem_dias)
-
-            pivot_table.index = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
-            fig4, ax4 = plt.subplots(figsize=(12, 6))
-            sns.heatmap(pivot_table, cmap="YlGnBu", ax=ax4)
-            ax4.set_title("Número de Ações por Hora e Dia da Semana")
-            ax4.set_xlabel("Interações")
-            ax4.set_ylabel("Dia da Semana")
-            st.pyplot(fig4)
-            
-            # 6. Análise de Tempo entre Ações (para usuários individuais)
-            st.subheader("Tempo entre Ações (Usuário Individual)")
-            usuario_id = st.text_input("Digite o ID do Cliente (10 dígitos) para analisar o tempo entre ações")
-            if usuario_id:
-                df_usuario = df[df['Usuario'] == int(usuario_id)]
-                if len(df_usuario) >= 2:
-                    df_usuario = df_usuario.sort_values("Data")
-                    df_usuario['Tempo_entre'] = df_usuario['Data'].diff().dt.total_seconds()
-                    st.dataframe(df_usuario[['Data', 'Acao', 'Tempo_entre']])
-                    st.write("Tempo médio entre ações (segundos): ", df_usuario['Tempo_entre'].mean())
-                else:
-                    st.info("O usuário possui poucas ações para análise.")
-    else:
-        st.info("Por favor, carregue um arquivo CSV para prosseguir.")
+if __name__ == "__main__":
+    main()
