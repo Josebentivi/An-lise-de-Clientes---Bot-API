@@ -20,6 +20,7 @@ numpy==2.2.4
 packaging==24.2
 pandas==2.2.3
 pillow==11.1.0
+python-pptx==1.0.2
 protobuf==5.29.3
 pyarrow==19.0.1
 pydeck==0.9.1

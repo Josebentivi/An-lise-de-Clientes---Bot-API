@@ -10,6 +10,7 @@ Dashboard Streamlit para analisar a base de usuarios e os eventos de uso da plat
 - adocao por feature com usuarios unicos, volume de eventos e taxa de falha
 - jornada com funil de engajamento, metricas de sessao e transicoes entre features
 - quadro de qualidade dos dados com duplicatas, datas invalidas e amostras recentes
+- exportacao de apresentacao `.pptx` com narrativa promocional baseada nos filtros atuais
 
 ## Estrutura principal
 

@@ -24,6 +24,7 @@ from analytics import (
     session_metrics,
     transition_summary,
 )
+from presentation_export import build_presentation_bytes
 
 
 API_URL = os.getenv("JURISAI_API_URL", "http://52.2.202.37/streamlit/")
@@ -76,6 +77,16 @@ def preparar_modelos(
         profile_user_quality(usuarios_raw),
         profile_event_quality(eventos_raw),
     )
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def gerar_apresentacao_pptx(
+    event_df: pd.DataFrame,
+    user_registry_df: pd.DataFrame,
+    start_date: pd.Timestamp,
+    end_date: pd.Timestamp,
+) -> bytes:
+    return build_presentation_bytes(event_df, user_registry_df, start_date, end_date)
 
 
 def filtrar_eventos(
@@ -459,6 +470,24 @@ def main() -> None:
     if filtered_events.empty:
         st.warning("Os filtros atuais nao retornaram eventos. Ajuste o recorte na barra lateral.")
         st.stop()
+
+    pptx_filename = f"jurisai_panorama_{start_date:%Y%m%d}_{end_date:%Y%m%d}.pptx"
+    with st.sidebar:
+        st.caption("Exportacao")
+        try:
+            pptx_bytes = gerar_apresentacao_pptx(filtered_events, filtered_users, start_date, end_date)
+        except Exception as exc:
+            st.error("Nao foi possivel gerar a apresentacao .pptx.")
+            st.exception(exc)
+        else:
+            st.download_button(
+                "Baixar apresentacao .pptx",
+                data=pptx_bytes,
+                file_name=pptx_filename,
+                mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                use_container_width=True,
+                help="Gera um deck promocional com base nos filtros atuais.",
+            )
 
     overview_tab, retention_tab, feature_tab, journey_tab, quality_tab = st.tabs(
         ["Visao geral", "Retencao", "Features", "Jornada", "Qualidade"]
