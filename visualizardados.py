@@ -36,28 +36,54 @@ def Carregando():
 # Suppress Streamlit's ScriptRunContext warning
 warnings.filterwarnings("ignore", message="missing ScriptRunContext")
 
+API_URL = os.getenv("JURISAI_API_URL", "http://52.2.202.37/streamlit/")
+REQUEST_TIMEOUT_SECONDS = int(os.getenv("JURISAI_TIMEOUT_SECONDS", "30"))
+
+
+def obter_chave_secreta():
+    try:
+        chave = st.secrets.get("CHAVE", "")
+    except Exception:
+        chave = ""
+    return chave or os.getenv("CHAVE", "")
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def carregar_saida(produto, chave):
+    response = requests.post(
+        API_URL,
+        json={"cliente": chave, "produto": produto},
+        timeout=REQUEST_TIMEOUT_SECONDS,
+    )
+    response.raise_for_status()
+
+    payload = response.json()
+    if "saida" not in payload:
+        raise ValueError("Resposta da API sem o campo 'saida'.")
+
+    return payload["saida"], payload.get("erro")
+
 # Configuração inicial da página
 st.set_page_config(page_title="Visualização dos Clientes JurisAI", layout="wide")
 #Carregando()
 #chave_secreta = st.text_input("Senha de acesso", type="password")
-chave_secreta = st.secrets["CHAVE"]
-if not chave_secreta and False:
-    st.info("Por favor, adicione a sua senha de acesso.", icon="🗝️")
-else:    
-    url = "http://52.2.202.37/streamlit/"
-    data = {"cliente": chave_secreta,
-            "produto": "jurisaiusuarios"}
-    response = requests.post(url, json=data, timeout=5*60)
-    if response.status_code == 200:  
-        saida = response.json()["saida"]
-        print(saida)
-        erro = response.json()["erro"]
-        print(erro)
-    else:  
-        print("Erro na requisição")
-        print(response.status_code)
-        print(response.text)
-        st.stop()    
+chave_secreta = obter_chave_secreta()
+if not chave_secreta:
+    st.error("A secret CHAVE nao esta configurada no Streamlit.")
+    st.caption("Configure CHAVE em Settings > Secrets ou defina a variavel de ambiente CHAVE.")
+    st.stop()
+else:
+    with st.spinner("Carregando dados dos clientes..."):
+        try:
+            saida, erro = carregar_saida("jurisaiusuarios", chave_secreta)
+        except requests.RequestException as exc:
+            st.error(f"Nao foi possivel acessar a API em {API_URL}.")
+            st.exception(exc)
+            st.stop()
+        except ValueError as exc:
+            st.error("A API retornou um formato inesperado para 'jurisaiusuarios'.")
+            st.exception(exc)
+            st.stop()
 
     # Upload do arquivo CSV
     #st.sidebar.header("Carregar arquivo CSV")
@@ -190,20 +216,17 @@ else:
 
     st.title("Dashboard de Visualização do comportamento de clientes - JurisAI")
 
-    url = "http://52.2.202.37/streamlit/"
-    data = {"cliente": chave_secreta,
-            "produto": "jurisai"}
-    response = requests.post(url, json=data, timeout=5*60)
-    if response.status_code == 200:  
-        saida = response.json()["saida"]
-        print(saida)
-        erro = response.json()["erro"]
-        print(erro)
-    else:  
-        print("Erro na requisição")
-        print(response.status_code)
-        print(response.text)
-        st.stop()    
+    with st.spinner("Carregando dados de uso da plataforma..."):
+        try:
+            saida, erro = carregar_saida("jurisai", chave_secreta)
+        except requests.RequestException as exc:
+            st.error(f"Nao foi possivel acessar a API em {API_URL}.")
+            st.exception(exc)
+            st.stop()
+        except ValueError as exc:
+            st.error("A API retornou um formato inesperado para 'jurisai'.")
+            st.exception(exc)
+            st.stop()
 
     # Upload do arquivo CSV
     #st.sidebar.header("Carregar arquivo CSV")
