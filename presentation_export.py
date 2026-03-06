@@ -297,7 +297,7 @@ def _build_growth_funnel_chart(growth: dict[str, pd.DataFrame], funnel: pd.DataF
         axes[1].axis("off")
     else:
         colors = ["#2A5DA3", "#3EADCF", "#3EADCF", "#ECB438", "#ECB438"][:len(funnel)]
-        sns.barplot(data=funnel, x="Usuarios", y="Etapa", ax=axes[1], palette=colors)
+        sns.barplot(data=funnel, x="Usuarios", y="Etapa", hue="Etapa", ax=axes[1], palette=colors, legend=False)
         axes[1].set_title("Funil de engajamento", fontsize=14, fontweight="bold", color="#22344A")
         axes[1].set_xlabel("Usuarios", color="#67788A")
         axes[1].set_ylabel("")
@@ -349,7 +349,7 @@ def _build_retention_chart(cohort: pd.DataFrame, segment_counts: pd.DataFrame) -
     else:
         palette = {"Power user": "#0C2136", "Recorrente": "#2A5DA3", "Explorador": "#3EADCF", "Novo": "#ECB438"}
         colors = [palette.get(seg, "#2A5DA3") for seg in segment_counts["Segmento"]]
-        sns.barplot(data=segment_counts, x="Usuarios", y="Segmento", ax=axes[1], palette=colors)
+        sns.barplot(data=segment_counts, x="Usuarios", y="Segmento", hue="Segmento", ax=axes[1], palette=colors, legend=False)
         axes[1].set_title("Perfil de usuarios", fontsize=14, fontweight="bold", color="#22344A")
         axes[1].set_xlabel("Usuarios", color="#67788A")
         axes[1].set_ylabel("")
