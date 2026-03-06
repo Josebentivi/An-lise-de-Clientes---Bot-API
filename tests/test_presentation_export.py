@@ -43,7 +43,7 @@ class PresentationExportTestCase(unittest.TestCase):
         self.assertIn("ppt/presentation.xml", members)
 
         slide_members = [name for name in members if name.startswith("ppt/slides/slide") and name.endswith(".xml")]
-        self.assertEqual(len(slide_members), 5)
+        self.assertEqual(len(slide_members), 8)
 
 
 if __name__ == "__main__":
